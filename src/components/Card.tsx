@@ -17,7 +17,7 @@ const Item = styled(Paper)(() => ({
 export default function Card({ date, time, vacancy, description, company, recruiter, contact }: ICardProps) {
   
   return (
-    <Paper style={{width:'70vw', padding:'15px'}}>
+    <Paper style={{padding:'15px'}}>
       <Stack
         spacing={{ xs: 1, sm: 2 }} 
         direction="row" 

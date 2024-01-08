@@ -1,7 +1,7 @@
 // import Image from 'next/image'
 import styles from './page.module.css'
-import Form from '@/app/Form'
-import Card from './Card'
+import Form from '@/components/Form'
+import Card from '../components/Card'
 
 export default function Home() {
 

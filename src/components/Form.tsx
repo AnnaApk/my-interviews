@@ -67,7 +67,7 @@ export default function Form() {
           label="Название вакансии"
           value={vacancy}
           onChange={handleVacancyChange}
-          style={{width: '70vw'}}
+          //style={{width: '70vw'}}
         />
         <TextField
           required
@@ -75,7 +75,6 @@ export default function Form() {
           label="Описание вакансии"
           value={description}
           onChange={handleDescriptionChange}
-          style={{width: '70vw'}}
         />
         <TextField
           required
@@ -83,7 +82,6 @@ export default function Form() {
           label="Название компании"
           value={company}
           onChange={handleCompanyChange}
-          style={{width: '70vw'}}
         />
         <TextField
           required
@@ -91,7 +89,6 @@ export default function Form() {
           label="Имя рекрутера"
           value={recruiter}
           onChange={handleRecruiterChange}
-          style={{width: '70vw'}}
         />
         <TextField
           required
@@ -99,7 +96,6 @@ export default function Form() {
           label="Контакты рекрутера"
           value={contact}
           onChange={handleContactChange}
-          style={{width: '70vw'}}
         />
         <Button type='submit' variant="outlined">Добавить</Button>
       </form>
