@@ -63,7 +63,7 @@ export default function Form() {
         <TimePicker onChange={handleTimeChange} />
         <TextField
           required
-          id="outlined-required"
+          id="vacancy"
           label="Название вакансии"
           value={vacancy}
           onChange={handleVacancyChange}
@@ -71,28 +71,28 @@ export default function Form() {
         />
         <TextField
           required
-          id="outlined-required"
+          id="description"
           label="Описание вакансии"
           value={description}
           onChange={handleDescriptionChange}
         />
         <TextField
           required
-          id="outlined-required"
+          id="company"
           label="Название компании"
           value={company}
           onChange={handleCompanyChange}
         />
         <TextField
           required
-          id="outlined-required"
+          id="name-recruiter"
           label="Имя рекрутера"
           value={recruiter}
           onChange={handleRecruiterChange}
         />
         <TextField
           required
-          id="outlined-required"
+          id="contact-recruiter"
           label="Контакты рекрутера"
           value={contact}
           onChange={handleContactChange}
