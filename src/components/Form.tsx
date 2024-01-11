@@ -1,4 +1,5 @@
 'use client'
+import { POST } from '@/app/api/create-card/route';
 import styles from './form.module.css'
 
 import {TextField, Button} from '@mui/material';
@@ -19,6 +20,8 @@ export default function Form() {
   function handleSubmit(e:FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log({date, time, vacancy, description, company, recruiter, contact})
+    fetch(`http://localhost:3000/api/create-card?date=${date}&time=${time}&vacancy=${vacancy}&description=${description}&company=${company}&recruiter=${recruiter}&contact=${contact}`, {method: 'POST'})
+    
   }
 
   function handleDateChange(value:{$d:Date} | null) {
