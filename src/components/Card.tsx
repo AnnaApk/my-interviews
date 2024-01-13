@@ -5,7 +5,9 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
-interface ICardProps extends IVacancy {}
+interface ICardProps {
+  vacancy: IVacancy;
+}
 
 const Item = styled(Paper)(() => ({
   padding: '16px',
@@ -14,19 +16,28 @@ const Item = styled(Paper)(() => ({
   background: 'rgba(0, 0, 0, 0.1)',
 }));
 
-export default function Card({ date, time, vacancy, description, company, recruiter, contact }: ICardProps) {
-  
+export default function Card({ vacancy }: ICardProps) {
+  const {
+    date,
+    time,
+    title,
+    description,
+    company,
+    recruiter,
+    contact,
+  } = vacancy;
+
   return (
     <Paper style={{padding:'15px'}}>
       <Stack
-        spacing={{ xs: 1, sm: 2 }} 
-        direction="row" 
+        spacing={{ xs: 1, sm: 2 }}
+        direction="row"
         useFlexGap
         flexWrap="wrap"
       >
         <Item>{date}</Item>
         <Item>{time}</Item>
-        <Item>{vacancy}</Item>
+        <Item>{title}</Item>
         <Item style={{whiteSpace:'pre-wrap'}}> {description}</Item>
         <Item>{company}</Item>
         <Item>{recruiter}</Item>

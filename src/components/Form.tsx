@@ -1,5 +1,5 @@
-'use client'
-import { POST } from '@/app/api/create-card/route';
+"use client"
+
 import styles from './form.module.css'
 
 import {TextField, Button} from '@mui/material';
@@ -10,8 +10,8 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 export default function Form() {
 
   const [date, setDate] = useState<String | null>(null);
-  const [time, setTime] = useState<String | null>(null);;
-  const [vacancy, setVacancy] = useState('');
+  const [time, setTime] = useState<String | null>(null);
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [company, setCompany] = useState('');
   const [recruiter, setRecruiter] = useState('');
@@ -19,9 +19,29 @@ export default function Form() {
 
   function handleSubmit(e:FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({date, time, vacancy, description, company, recruiter, contact})
-    fetch(`http://localhost:3000/api/create-card?date=${date}&time=${time}&vacancy=${vacancy}&description=${description}&company=${company}&recruiter=${recruiter}&contact=${contact}`, {method: 'POST'})
-    
+
+    // TODO:get data from form
+    const data = Object.fromEntries(new FormData(e.currentTarget));
+    console.log("data: ", data); // eslint-disable-line
+    // In this case you can use uncontrolled component with defaultValue
+
+    console.log({date, time, title, description, company, recruiter, contact})
+    fetch(
+      '/api/vacancies',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          date,
+          time,
+          title,
+          description,
+          company,
+          recruiter,
+          contact,
+        }),
+      }
+    )
+
   }
 
   function handleDateChange(value:{$d:Date} | null) {
@@ -44,7 +64,7 @@ export default function Form() {
     }
   }
   function handleVacancyChange(e:ChangeEvent<HTMLInputElement>) {
-    setVacancy(e.target.value)
+    setTitle(e.target.value)
   }
   function handleDescriptionChange(e:ChangeEvent<HTMLInputElement>) {
     setDescription(e.target.value)
@@ -66,9 +86,9 @@ export default function Form() {
         <TimePicker onChange={handleTimeChange} />
         <TextField
           required
-          id="vacancy"
+          id="title"
           label="Название вакансии"
-          value={vacancy}
+          value={title}
           onChange={handleVacancyChange}
           //style={{width: '70vw'}}
         />
