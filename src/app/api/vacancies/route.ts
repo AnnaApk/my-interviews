@@ -9,29 +9,9 @@ import { NextResponse } from 'next/server';
 // PATCH /api/vacancies/:id - update a single vacancy by id
 // DELETE /api/vacancies/:id - delete a single vacancy by id
 
-
-const createTableIfNotExists = async () => {
-  const result = await sql`
-      CREATE TABLE IF NOT EXISTS vacancies
-      (
-          id          serial PRIMARY KEY,
-          Title       text,
-          Time        text,
-          Date        text,
-          Description text,
-          Company     text,
-          Recruiter   text,
-          Contact     text
-      );
-`;
-  // console.log("createTableIfNotExists: ", result); // eslint-disable-line
-}
-
-// Not sure if this is the best place to create a table
-// Better is to use a migration tool
-createTableIfNotExists();
-
 export async function POST(request: Request) {
+  console.log('req', request)
+
   const requestBody = await request.json();
   const {
     title,
@@ -43,12 +23,11 @@ export async function POST(request: Request) {
     contact,
   } = requestBody
 
-  try {
-    await createTableIfNotExists()
+  // console.log('POST', date, time, title, description, company, recruiter, contact)
 
+  try {
     await sql`
-        INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact)
-        VALUES (
+        INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact) VALUES (
             ${title},
             ${time},
             ${date},
@@ -69,7 +48,7 @@ export async function GET() {
   try {
     const { rows } = await sql`SELECT * FROM vacancies;`
 
-    console.log("GET /vacancies result: ", rows); // eslint-disable-line
+    console.log("GET /Vacancies result: ", rows); // eslint-disable-line
 
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
