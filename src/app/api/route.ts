@@ -3,5 +3,5 @@ import { NextResponse } from 'next/server';
 
 // Health check
 export async function GET() {
-  NextResponse.json({ status: 'ok' }, { status: 200 });
+  return NextResponse.json({ status: 'ok' }, { status: 200 });
 }

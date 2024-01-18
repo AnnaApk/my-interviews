@@ -1,43 +1,33 @@
 "use client"
 
-import styles from './form.module.css'
-
+import { IForm } from '@/interfaces/models';
+import styles from './form.module.css';
 import {TextField, Button} from '@mui/material';
 import {DatePicker, TimePicker, LocalizationProvider} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { FormEvent } from 'react';
 
-export default function Form() {
+interface FormProps {
+  handleSubmit: (params: IForm) => void
+}
 
-  function handleSubmit(e:FormEvent<HTMLFormElement>) {
+export default function Form({handleSubmit}:FormProps) {
+
+  function onSubmit(e:FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    // TODO:get data from form
-    const {date, time, title, description, company, recruiter, contact} = Object.fromEntries(new FormData(e.currentTarget));
-
-    fetch('/api/vacancies', {
-        method: 'POST',
-        body: JSON.stringify({
-          date,
-          time,
-          title,
-          description,
-          company,
-          recruiter,
-          contact,
-        }),
-      }
-    )
-    const myForm = document.getElementById("form") as HTMLFormElement;
-
-    if (myForm) {
-      myForm.reset();
-    }
+    const formData = new FormData(e.currentTarget);
+    const formValues: Record<string, string> = {};
+    formData.forEach((value, key) => {
+      // Explicitly cast value to string
+      formValues[key] = (value as string);
+    });
+    const { date, time, title, description, company, recruiter, contact } = formValues;
+    handleSubmit({ date, time, title, description, company, recruiter, contact })
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <form id='form' onSubmit={handleSubmit} className={styles.form}>
+      <form id='form' onSubmit={onSubmit} className={styles.form}>
         <DatePicker name="date" label="Дата" />
         <TimePicker name="time" label="Время" />
         <TextField

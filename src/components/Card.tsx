@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { IVacancy } from "@/interfases/modeles";
+import { IVacancy } from "@/interfaces/models";
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';

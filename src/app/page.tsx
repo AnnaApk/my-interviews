@@ -1,17 +1,16 @@
-// import Image from 'next/image'
+'use client'
 import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
-import { IVacancy } from '@/interfases/modeles'
+import { IForm, IVacancy } from '@/interfaces/models'
+import { useEffect, useState } from 'react';
 
-export default async function Home () {
-  // we need a full url here as we are in the server side
-  const vacancies: IVacancy[] = await fetch(`${process.env.BASE_URL}/api/vacancies`, { cache: 'no-cache' })
-    .then(responseStream => responseStream.json())
-    .then(response => response.data)
-    .catch(error => console.log(error))
-
-  console.log("vacancies: ", vacancies); // eslint-disable-line
+export default function Home () {
+  const [vacancies, setVacancies] = useState<IVacancy[]>([])
+  
+  useEffect(() => {
+    getVacancies()
+  }, [])
 
   return (
 
@@ -19,9 +18,40 @@ export default async function Home () {
 
       {vacancies?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} />))}
 
-      <Form />
+      <Form  handleSubmit={handleSubmit} />
 
     </main>
 
   )
+
+  function getVacancies() {
+    fetch(`/api/vacancies`, { cache: 'no-cache' })
+    .then(responseStream => responseStream.json())
+    .then(response => setVacancies(response.data))
+    .catch(error => console.log(error))
+  }
+
+  function handleSubmit({date, time, title, description, company, recruiter, contact}: IForm) {
+    fetch('/api/vacancies', {
+        method: 'POST',
+        body: JSON.stringify({
+          date,
+          time,
+          title,
+          description,
+          company,
+          recruiter,
+          contact,
+        }),
+      }
+    )
+    .then(() => getVacancies())
+    .catch(error => console.log(error))
+
+    const myForm = document.getElementById("form") as HTMLFormElement;
+
+    if (myForm) {
+      myForm.reset();
+    }
+  }
 }

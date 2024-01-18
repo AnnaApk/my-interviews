@@ -35,7 +35,7 @@ export async function POST(request: Request) {
             ${company},
             ${recruiter},
             ${contact}
-        );`
+        );`  
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
