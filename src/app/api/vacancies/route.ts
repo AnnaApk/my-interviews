@@ -10,7 +10,7 @@ import { NextResponse } from 'next/server';
 // DELETE /api/vacancies/:id - delete a single vacancy by id
 
 export async function POST(request: Request) {
-  console.log('req', request)
+  // console.log('req', request)
 
   const requestBody = await request.json();
   const {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
             ${company},
             ${recruiter},
             ${contact}
-        );`  
+        );`
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
@@ -47,8 +47,6 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const { rows } = await sql`SELECT * FROM vacancies;`
-
-    console.log("GET /Vacancies result: ", rows); // eslint-disable-line
 
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
