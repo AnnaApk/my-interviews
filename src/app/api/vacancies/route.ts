@@ -10,8 +10,6 @@ import { NextResponse } from 'next/server';
 // DELETE /api/vacancies/:id - delete a single vacancy by id
 
 export async function POST(request: Request) {
-  console.log('req', request)
-
   const requestBody = await request.json();
   const {
     title,
@@ -23,8 +21,6 @@ export async function POST(request: Request) {
     contact,
   } = requestBody
 
-  // console.log('POST', date, time, title, description, company, recruiter, contact)
-
   try {
     await sql`
         INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact) VALUES (
@@ -35,11 +31,21 @@ export async function POST(request: Request) {
             ${company},
             ${recruiter},
             ${contact}
-        );`  
+        );`
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
-    console.log('error',error)
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  const requestBody = await request.json();
+  const { id } = requestBody
+  try {
+    await sql`DELETE FROM vacancies WHERE id = ${id};`
+    return NextResponse.json({}, { status: 200 });
+  } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
@@ -47,9 +53,6 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     const { rows } = await sql`SELECT * FROM vacancies;`
-
-    console.log("GET /Vacancies result: ", rows); // eslint-disable-line
-
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

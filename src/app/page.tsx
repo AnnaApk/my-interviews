@@ -3,50 +3,19 @@ import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
 import { IForm, IVacancy } from '@/interfaces/models'
-import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig }  from 'swr';
+
+const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Home () {
-  const [vacancies, setVacancies] = useState<IVacancy[]>([])
-
-  const fetcher = (url: string) => fetch(url)
-  .then((res) => res.json())
-  .then(response => setVacancies(response.data));
+  const { error, isLoading, data } = useSWR<{ data: IVacancy[] }>('/api/vacancies', fetcher);
   
-  const { error, isLoading } = useSWR('/api/vacancies', fetcher)
-  
-  useEffect(() => {
-    getVacancies()
-  }, [])
+  const { mutate } = useSWRConfig();
 
-  // if (error) return "An error has occurred.";
-  // if (isLoading) return "Loading...";
-  return (
-
-    <main className={styles.main}>
-
-      { error 
-        ? <p>An error has occurred.</p>
-        : isLoading
-        ? <p>Loading...</p>
-        : vacancies?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} />))
-      }
-
-      <Form  handleSubmit={handleSubmit} />
-
-    </main>
-
-  )
-
-  function getVacancies() {
-    fetch(`/api/vacancies`, { cache: 'no-cache' })
-    .then(responseStream => responseStream.json())
-    .then(response => setVacancies(response.data))
-    .catch(error => console.log(error))
-  }
-
-  function handleSubmit({date, time, title, description, company, recruiter, contact}: IForm) {
-    fetch('/api/vacancies', {
+  function handleSubmitAddCard({date, time, title, description, company, recruiter, contact}: IForm) {
+    mutate(
+      '/api/vacancies',
+      fetcher('/api/vacancies', {
         method: 'POST',
         body: JSON.stringify({
           date,
@@ -57,15 +26,32 @@ export default function Home () {
           recruiter,
           contact,
         }),
-      }
+      })
     )
-    .then(() => getVacancies())
-    .catch(error => console.log(error))
-
-    const myForm = document.getElementById("form") as HTMLFormElement;
-
-    if (myForm) {
-      myForm.reset();
-    }
   }
+
+  function handleDelete(id: number) {
+    mutate(
+      '/api/vacancies',
+      fetcher('/api/vacancies', {
+        method: 'DELETE',
+        body: JSON.stringify({id}),
+      })
+    )  
+  }
+
+  return (
+
+    <main className={styles.main}>
+      <div className={styles.card_container}>
+        {error && <p>An error has occurred.</p>}
+        {isLoading && <p>Loading...</p>}
+        {data?.data?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} handleDelete={handleDelete} />))}
+      </div>
+      
+      <Form  handleSubmit={handleSubmitAddCard} />
+
+    </main>
+
+  )
 }
