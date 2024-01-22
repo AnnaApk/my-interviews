@@ -7,3 +7,8 @@
   min-height: 100vh;
   gap: 30px;
 }
+.card_container {
+  display: grid;
+  gap: 40px;
+  grid: auto auto/1fr 1fr;
+}

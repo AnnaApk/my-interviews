@@ -1,44 +1,64 @@
-// import Image from 'next/image'
+'use client'
 import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
+import { IForm, IVacancy } from '@/interfaces/models'
+import useSWR, { useSWRConfig }  from 'swr';
 
-export default function Home() {
+const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
-  const data = {
-    company:
-    "Company",
-    contact:
-    "89164538622",
-    date: 
-    "06.01.2024",
-    description: 
-    `Пожелания к кандидату:  Знание CSS3, HTML5, опыт responsive/adaptive вёрстки; Уверенное знание JavaScript(ES6+), TypeScript; Опыт разработки с использованием React (от 1,5 лет) и Next.js; Понимание SPA и SSR; Умение работать с Git (мы используем GitHub); Будет плюсом:  Опыт работы со styled-components; Опыт написание jest тестов; Понимание и интерес к Crypto / Web3.0 сфере;`,
-    recruiter: 
-    "Anna",
-    time: 
-    "00:00",
-    vacancy: 
-    "junior-frontend"
+export default function Home () {
+  const { error, isLoading, data } = useSWR<{ data: IVacancy[] }>('/api/vacancies', fetcher);
+  
+  const { mutate } = useSWRConfig();
+
+  function handleSubmitAddCard({date, time, title, description, company, recruiter, contact}: IForm) {
+    mutate(
+      '/api/vacancies',
+      fetcher('/api/vacancies', {
+        method: 'POST',
+        body: JSON.stringify({
+          date,
+          time,
+          title,
+          description,
+          company,
+          recruiter,
+          contact,
+        }),
+      })
+    )
+  }
+
+  function handleDelete(id: number) {
+    if (confirm('Вы хотите удалить эту карточку безвозвратно?')) {
+      mutate(
+        '/api/vacancies',
+        fetcher('/api/vacancies', {
+          method: 'DELETE',
+          body: JSON.stringify({id}),
+        })
+      ) 
     }
+  }
 
   return (
 
-      <main className={styles.main}>
+    <main className={styles.main}>
+      
+      <div className={styles.card_container}>
 
-        <Card 
-          date={data.date} 
-          time={data.time} 
-          vacancy={data.vacancy} 
-          company={data.company} 
-          description={data.description} 
-          recruiter={data.recruiter} 
-          contact={data.contact}
-        />
+        {error && <p>An error has occurred.</p>}
 
-        <Form />
+        {isLoading && <p>Loading...</p>}
 
-      </main>
-  
+        {data?.data?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} handleDelete={handleDelete} />))}
+
+      </div>
+      
+      <Form  handleSubmit={handleSubmitAddCard} />
+
+    </main>
+
   )
 }

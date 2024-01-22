@@ -1,101 +1,64 @@
-'use client'
-import styles from './form.module.css'
+"use client"
 
+import { IForm } from '@/interfaces/models';
+import styles from './form.module.css';
 import {TextField, Button} from '@mui/material';
 import {DatePicker, TimePicker, LocalizationProvider} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 
-export default function Form() {
+interface FormProps {
+  handleSubmit: (params: IForm) => void
+}
 
-  const [date, setDate] = useState<String | null>(null);
-  const [time, setTime] = useState<String | null>(null);;
-  const [vacancy, setVacancy] = useState('');
-  const [description, setDescription] = useState('');
-  const [company, setCompany] = useState('');
-  const [recruiter, setRecruiter] = useState('');
-  const [contact, setContact] = useState('');
+export default function Form({handleSubmit}:FormProps) {
 
-  function handleSubmit(e:FormEvent<HTMLFormElement>) {
+  function onSubmit(e:FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log({date, time, vacancy, description, company, recruiter, contact})
-  }
-
-  function handleDateChange(value:{$d:Date} | null) {
-    if (value) {
-      const day = value.$d.getDate();
-      const month = value.$d.getMonth() + 1;
-      const year = value.$d.getFullYear();
-      const a = day <= 9 ? '0' : '';
-      const b = month <= 9 ? '0' : '';
-      setDate(`${a}${day}.${b}${month}.${year}`)
-    }
-  }
-  function handleTimeChange(value:{$d:Date} | null) {
-    if (value) {
-      const minutes = value.$d.getMinutes();
-      const hours = value.$d.getHours();
-      const a = hours <= 9 ? '0' : '';
-      const b = minutes <= 9 ? '0' : '';
-      setTime(`${a}${hours}:${b}${minutes}`)
-    }
-  }
-  function handleVacancyChange(e:ChangeEvent<HTMLInputElement>) {
-    setVacancy(e.target.value)
-  }
-  function handleDescriptionChange(e:ChangeEvent<HTMLInputElement>) {
-    setDescription(e.target.value)
-  }
-  function handleCompanyChange(e:ChangeEvent<HTMLInputElement>) {
-    setCompany(e.target.value)
-  }
-  function handleRecruiterChange(e:ChangeEvent<HTMLInputElement>) {
-    setRecruiter(e.target.value)
-  }
-  function handleContactChange(e:ChangeEvent<HTMLInputElement>) {
-    setContact(e.target.value)
+    const formData = new FormData(e.currentTarget);
+    const formValues: Record<string, string> = {};
+    formData.forEach((value, key) => {
+      // Explicitly cast value to string
+      formValues[key] = (value as string);
+    });
+    const { date, time, title, description, company, recruiter, contact } = formValues;
+    handleSubmit({ date, time, title, description, company, recruiter, contact })
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <DatePicker onChange={handleDateChange} />
-        <TimePicker onChange={handleTimeChange} />
+      <form id='form' onSubmit={onSubmit} className={styles.form}>
+        <DatePicker name="date" label="Дата" />
+        <TimePicker name="time" label="Время" />
         <TextField
           required
-          id="vacancy"
+          id="title"
           label="Название вакансии"
-          value={vacancy}
-          onChange={handleVacancyChange}
-          //style={{width: '70vw'}}
+          name="title"
         />
         <TextField
           required
           id="description"
           label="Описание вакансии"
-          value={description}
-          onChange={handleDescriptionChange}
+          name="description"
         />
         <TextField
           required
           id="company"
           label="Название компании"
-          value={company}
-          onChange={handleCompanyChange}
+          name="company"
         />
         <TextField
           required
           id="name-recruiter"
           label="Имя рекрутера"
-          value={recruiter}
-          onChange={handleRecruiterChange}
+          name="recruiter"
         />
         <TextField
           required
           id="contact-recruiter"
           label="Контакты рекрутера"
-          value={contact}
-          onChange={handleContactChange}
+          name="contact"
         />
         <Button type='submit' variant="outlined">Добавить</Button>
       </form>
