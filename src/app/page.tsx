@@ -31,22 +31,29 @@ export default function Home () {
   }
 
   function handleDelete(id: number) {
-    mutate(
-      '/api/vacancies',
-      fetcher('/api/vacancies', {
-        method: 'DELETE',
-        body: JSON.stringify({id}),
-      })
-    )  
+    if (confirm('Вы хотите удалить эту карточку безвозвратно?')) {
+      mutate(
+        '/api/vacancies',
+        fetcher('/api/vacancies', {
+          method: 'DELETE',
+          body: JSON.stringify({id}),
+        })
+      ) 
+    }
   }
 
   return (
 
     <main className={styles.main}>
+      
       <div className={styles.card_container}>
+
         {error && <p>An error has occurred.</p>}
+
         {isLoading && <p>Loading...</p>}
+
         {data?.data?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} handleDelete={handleDelete} />))}
+
       </div>
       
       <Form  handleSubmit={handleSubmitAddCard} />
