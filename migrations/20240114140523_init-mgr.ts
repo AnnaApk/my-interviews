@@ -14,7 +14,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTable('Vacancies')
+  await knex.schema.dropTable('vacancies')
   .then(() => {
     console.log(`Таблица vacancies успешно удалена.`);
     knex.destroy(); // Закрываем соединение после выполнения операции
