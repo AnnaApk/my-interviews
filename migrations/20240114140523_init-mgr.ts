@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('title');
     table.string('time');
     table.string('date');
+    table.string('skills');
     table.string('description');
     table.string('company');
     table.string('recruiter');

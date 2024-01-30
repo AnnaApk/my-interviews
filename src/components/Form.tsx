@@ -1,17 +1,19 @@
 "use client"
 
-import { IForm } from '@/interfaces/models';
+import { IForm, ISkillForm } from '@/interfaces/models';
 import styles from './form.module.css';
 import {TextField, Button} from '@mui/material';
 import {DatePicker, TimePicker, LocalizationProvider} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { FormEvent } from 'react';
+import MultipleSelectionSkills from './MultipleSelectionSkills';
 
 interface FormProps {
-  handleSubmit: (params: IForm) => void
+  handleSubmit: (params: IForm) => void;
+  optionSkills: ISkillForm[] | undefined;
 }
 
-export default function Form({handleSubmit}:FormProps) {
+export default function Form({handleSubmit, optionSkills}:FormProps) {
 
   function onSubmit(e:FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,8 +23,8 @@ export default function Form({handleSubmit}:FormProps) {
       // Explicitly cast value to string
       formValues[key] = (value as string);
     });
-    const { date, time, title, description, company, recruiter, contact } = formValues;
-    handleSubmit({ date, time, title, description, company, recruiter, contact })
+    const { date, time, title, skills, description, company, recruiter, contact } = formValues;
+    handleSubmit({ date, time, title, skills, description, company, recruiter, contact })
   }
 
   return (
@@ -36,6 +38,7 @@ export default function Form({handleSubmit}:FormProps) {
           label="Название вакансии"
           name="title"
         />
+        <MultipleSelectionSkills optionSkills={optionSkills} />
         <TextField
           required
           id="description"

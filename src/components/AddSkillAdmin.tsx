@@ -1,11 +1,16 @@
 'use client'
 import styles from './addSkillAdmin.module.css';
+
 import {TextField, Button } from '@mui/material';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
-import { FormEvent } from 'react';
 
-export default function AddSkillAdmin() {
+import { FormEvent } from 'react';
+import { ISkillForm } from '@/interfaces/models';
+interface FormProps {
+  handleSubmit: (params:ISkillForm) => void
+}
+export default function AddSkillAdmin({handleSubmit}:FormProps) {
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
@@ -40,7 +45,7 @@ export default function AddSkillAdmin() {
       formValues[key] = (value as string);
     });
     const { skill, grade_1, grade_2, grade_3, grade_4, grade_5 } = formValues;
-    console.log({ skill, grade_1, grade_2, grade_3, grade_4, grade_5 })
+    handleSubmit({skill, grade_1, grade_2, grade_3, grade_4, grade_5})
   }
 
   return (
@@ -52,41 +57,42 @@ export default function AddSkillAdmin() {
           id="skill"
           label="Навык"
           name="skill"
+          placeholder='Например, HTML'
         />
         <Textarea
           required
           id='grade_1'
           name='grade_1'
           minRows={2}
-          placeholder='Уровень 1'
+          placeholder='HTML 1: ...'
         />
          <Textarea
           required
           id='grade_2'
           name='grade_2'
           minRows={2}
-          placeholder='Уровень 2'
+          placeholder='HTML 2: ...'
         />
          <Textarea
           required
           id='grade_3'
           name='grade_3'
           minRows={2}
-          placeholder='Уровень 3'
+          placeholder='HTML 3: ...'
         />
          <Textarea
           required
           id='grade_4'
           name='grade_4'
           minRows={2}
-          placeholder='Уровень 4'
+          placeholder='HTML 4: ...'
         />
          <Textarea
           required
           id='grade_5'
           name='grade_5'
           minRows={2}
-          placeholder='Уровень 5'
+          placeholder='HTML 5: ...'
         />
         <Button type='submit' variant="outlined">Добавить</Button>
       </form>
