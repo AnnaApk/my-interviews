@@ -3,7 +3,7 @@ import AddSkillAdmin from "@/components/AddSkillAdmin";
 import { ISkillForm, ISkill } from "@/interfaces/models";
 import useSWR, { useSWRConfig }  from 'swr';
 import styles from './page-admin.module.css';
-import { Button } from "@mui/material";
+import SkillAddedCard from "@/components/SkillAddedCard";
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json());
 
@@ -29,6 +29,18 @@ export default function Admin() {
     )
   }
 
+  function handleDeleteSkill(id: number) {
+    if (confirm('Вы хотите удалить эту карточку безвозвратно?')) {
+      mutate(
+        '/admin/api/skills',
+        fetcher('/admin/api/skills', {
+          method: 'DELETE',
+          body: JSON.stringify({id}),
+        })
+      ) 
+    }
+  }
+
   return (
     <>
       <div className={styles.container}>
@@ -40,11 +52,7 @@ export default function Admin() {
         {isLoading && <p>Loading...</p>}
 
         {data?.data?.map((el) => (
-          <div className={styles.skill_item} key={el.id}>
-            <p className={styles.skill_title} >{el.skill}</p>
-            <Button>Поправить</Button>
-            <Button>Удалить</Button>
-          </div>
+          <SkillAddedCard key={el.id} title={el.skill} id={el.id} deleteClick={handleDeleteSkill} />
         )) }
       </div>
       

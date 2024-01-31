@@ -1,0 +1,8 @@
+.skill_item {
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 10px;
+}
+.skill_title {
+  margin: 0;
+}

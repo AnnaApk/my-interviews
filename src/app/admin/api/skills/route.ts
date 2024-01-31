@@ -44,3 +44,14 @@ export async function GET() {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  const requestBody = await request.json();
+  const { id } = requestBody
+  try {
+    await sql`DELETE FROM skills WHERE id = ${id};`
+    return NextResponse.json({}, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
