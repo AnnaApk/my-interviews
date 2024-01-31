@@ -12,8 +12,6 @@ export default function Home () {
   
   const { mutate } = useSWRConfig();
 
-  // console.log('derbwer', data)
-
   function handleSubmitAddCard({date, time, title, skills, description, company, recruiter, contact}: IForm) {
     mutate(
       '/api/vacancies',

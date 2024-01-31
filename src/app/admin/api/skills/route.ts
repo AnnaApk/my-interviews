@@ -55,3 +55,31 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  const requestBody = await request.json();
+  const {
+    id,
+    skill,
+    grade_1,
+    grade_2,
+    grade_3,
+    grade_4,
+    grade_5,
+  } = requestBody
+
+  try {
+    await sql`
+      UPDATE skills
+      SET Skill = ${skill},
+          Grade_1 = ${grade_1},
+          Grade_2 = ${grade_2},
+          Grade_3 = ${grade_3},
+          Grade_4 = ${grade_4},
+          Grade_5 = ${grade_5}
+      WHERE id = ${id};`
+    return NextResponse.json({}, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
