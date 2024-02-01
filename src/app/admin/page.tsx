@@ -13,6 +13,7 @@ export default function Admin() {
   const { error, isLoading, data } = useSWR<{data: [ISkill]}>('/admin/api/skills', fetcher);
   const [ isEditMode, setIsEditMode ] = useState<boolean>(false);
   const [ editSkill, setEditSkill ] = useState<ISkill | null >(null);
+  const [ currentTab, setCurrentTab ] = useState<'skills' | 'evolution'>('skills');
   
   const { mutate } = useSWRConfig();
 
@@ -71,28 +72,51 @@ export default function Admin() {
     setEditSkill(null);
   }
 
+  function handleChangeTab(tab: 'skills' | 'evolution') {
+    setCurrentTab(tab);
+  }
+
   return (
     <>
-      <div className={styles.container}>
-
-        <p style={{width:'100%'}}>Уже дoбавленные навыки:</p>
-
-        {error && <p>An error has occurred.</p>}
-
-        {isLoading && <p>Loading...</p>}
-
-        {data?.data?.map((el) => (
-          <SkillAddedCard key={el.id} title={el.skill} id={el.id} deleteClick={handleDeleteSkill} editMode={handleSetEditMode} />
-        )) }
-
+      <div className={styles.button_header}>
+        <button 
+        onClick={() => handleChangeTab('skills')} 
+        className={`${styles.button} ${currentTab === 'skills' ? styles.button_disabled : ''}`}
+        >Навыки
+        </button>
+        <button
+        onClick={() => handleChangeTab('evolution')} 
+        className={`${styles.button} ${currentTab === 'evolution' ? styles.button_disabled : ''}`}
+        >Развитие
+        </button>
       </div>
 
-      { isEditMode && editSkill ? 
+      { currentTab === 'skills' ?
+        <>
+          <div className={styles.container}>
+
+          <p style={{width:'100%'}}>Уже дoбавленные навыки:</p>
+
+          {error && <p>An error has occurred.</p>}
+
+          {isLoading && <p>Loading...</p>}
+
+          {data?.data?.map((el) => (
+            <SkillAddedCard key={el.id} title={el.skill} id={el.id} deleteClick={handleDeleteSkill} editMode={handleSetEditMode} />
+          ))}
+
+          </div>
+
+          { isEditMode && editSkill ? 
           <EditSkill handleSubmit={handleEditSkill} el={editSkill} />
-         :
-        <AddSkillAdmin handleSubmit={handleAddSkillToSQL} />
+          :
+          <AddSkillAdmin handleSubmit={handleAddSkillToSQL} />
+          }
+        </>
+        :
+        <></>
       }
-      
+
     </>
   )
 }

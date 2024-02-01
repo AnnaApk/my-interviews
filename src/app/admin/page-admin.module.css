@@ -5,3 +5,31 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+.button_header {
+  width: 70%;
+  margin: auto;
+  padding-top: 80px;
+  position: relative;
+  border-bottom: 1px solid black;
+}
+.button {
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 5px;
+  border-bottom: none;
+  position: absolute;
+  bottom: -1px;
+  padding: 15px;
+  background: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.button:last-of-type {
+  left: 90px;
+}
+.button_disabled {
+  color: gray;
+  border: 1px solid grey;
+  border-bottom: 1px solid rgba(229,229,229);
+  cursor: auto;
+}
