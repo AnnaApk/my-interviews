@@ -7,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
-import ListSubheader, { ListSubheaderProps } from '@mui/material/ListSubheader';
 
 import { useState } from 'react';
 import { ISkillForm } from '@/interfaces/models';
@@ -32,14 +31,6 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
     setSelectedSkills(typeof value === 'string' ? value.split(',') : value);
   };
 
-  let str = '';
-
-  // function MyListSubheader(props: ListSubheaderProps) {
-  //   return <ListSubheader {...props} />;
-  // }
-  
-  // MyListSubheader.muiSkipListHighlight = true;
-
   return (
       <FormControl>
         <InputLabel id="label">Навыки</InputLabel>
@@ -61,7 +52,6 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
         >
           {skills2?.map((el) => { 
             if ( el[0] === 'skill' ) {
-              str = el[0]
               return (
                 <MenuItem key={el[1]} disabled>{el[1]}</MenuItem>
               )

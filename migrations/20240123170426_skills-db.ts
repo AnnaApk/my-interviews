@@ -20,6 +20,6 @@ export async function down(knex: Knex): Promise<void> {
   })
   .catch((error) => {
     console.error(`Ошибка при удалении таблицы skills:`, error);
-    knex.destroy(); // Закрываем соединение в случае ошибки
+    knex.destroy();
   });
 }
