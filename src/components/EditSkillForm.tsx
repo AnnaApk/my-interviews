@@ -5,7 +5,7 @@ import {TextField, Button } from '@mui/material';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 import { ISkill } from '@/interfaces/models';
 
 interface FormProps {
@@ -15,12 +15,6 @@ interface FormProps {
 export default function EditSkill({handleSubmit, el }:FormProps) {
   
   const { id } = el;
-  const [ inputSkill, setInputSkill] = useState<string>(el.skill);
-  const [ inputGrade1, setInputGrade1] = useState<string>(el.grade_1);
-  const [ inputGrade2, setInputGrade2] = useState<string>(el.grade_2);
-  const [ inputGrade3, setInputGrade3] = useState<string>(el.grade_3);
-  const [ inputGrade4, setInputGrade4] = useState<string>(el.grade_4);
-  const [ inputGrade5, setInputGrade5] = useState<string>(el.grade_5);
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
@@ -64,57 +58,45 @@ export default function EditSkill({handleSubmit, el }:FormProps) {
       <form onSubmit={onSubmit} className={styles.form}>
         <TextField
           required
-          id="skill"
           label="Навык"
           name="skill"
           placeholder='Например, HTML'
-          value={inputSkill}
-          onChange={(e) => setInputSkill(e.target.value)}
+          defaultValue={el.skill}
         />
         <Textarea
           required
-          id='grade_1'
           name='grade_1'
           minRows={2}
           placeholder='HTML 1: ...'
-          value={inputGrade1}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setInputGrade1(e.target.value)}
+          defaultValue={el.grade_1}
         />
          <Textarea
           required
-          id='grade_2'
           name='grade_2'
           minRows={2}
           placeholder='HTML 2: ...'
-          value={inputGrade2}
-          onChange={(e) => setInputGrade2(e.target.value)}
+          defaultValue={el.grade_2}
         />
          <Textarea
           required
-          id='grade_3'
           name='grade_3'
           minRows={2}
           placeholder='HTML 3: ...'
-          value={inputGrade3}
-          onChange={(e) => setInputGrade3(e.target.value)}
+          defaultValue={el.grade_3}
         />
          <Textarea
           required
-          id='grade_4'
           name='grade_4'
           minRows={2}
           placeholder='HTML 4: ...'
-          value={inputGrade4}
-          onChange={(e) => setInputGrade4(e.target.value)}
+          defaultValue={el.grade_4}
         />
          <Textarea
           required
-          id='grade_5'
           name='grade_5'
           minRows={2}
           placeholder='HTML 5: ...'
-          value={inputGrade5}
-          onChange={(e) => setInputGrade5(e.target.value)}
+          defaultValue={el.grade_5}
         />
         <Button type='submit' variant="outlined">Редактировать</Button>
       </form>

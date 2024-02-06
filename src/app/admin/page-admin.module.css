@@ -14,7 +14,8 @@
 }
 .button {
   cursor: pointer;
-  border: 1px solid black;
+  color: grey;
+  border: 1px solid gray;
   border-radius: 5px;
   border-bottom: none;
   position: absolute;
@@ -28,8 +29,8 @@
   left: 90px;
 }
 .button_disabled {
-  color: gray;
-  border: 1px solid grey;
+  color: black;
+  border: 1px solid black;
   border-bottom: 1px solid rgba(229,229,229);
   cursor: auto;
 }
