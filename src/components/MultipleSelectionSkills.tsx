@@ -32,11 +32,13 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
     setSelectedSkills(typeof value === 'string' ? value.split(',') : value);
   };
 
-  function MyListSubheader(props: ListSubheaderProps) {
-    return <ListSubheader {...props} />;
-  }
+  let str = '';
+
+  // function MyListSubheader(props: ListSubheaderProps) {
+  //   return <ListSubheader {...props} />;
+  // }
   
-  MyListSubheader.muiSkipListHighlight = true;
+  // MyListSubheader.muiSkipListHighlight = true;
 
   return (
       <FormControl>
@@ -59,13 +61,21 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
         >
           {skills2?.map((el) => { 
             if ( el[0] === 'skill' ) {
+              str = el[0]
               return (
                 <MenuItem key={el[1]} disabled>{el[1]}</MenuItem>
               )
             } else {
               let arr = el[1].split(':')
+              let disabledMood = false;
+              for (let k of selectedSkills) {
+                let x = k.split(' ')
+                let y = arr[0].split(' ')
+                if (x[0] === y[0] && k !== arr[0]) disabledMood = true
+                
+              }
               return (
-                <MenuItem key={arr[0]} value={`${arr[0]}`}>{arr[1]}</MenuItem>
+                <MenuItem key={arr[0]} value={`${arr[0]}`} disabled={disabledMood}>{arr[1]}</MenuItem>
               )
             }
           }
