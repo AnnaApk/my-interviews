@@ -27,7 +27,7 @@ export default function Home () {
           recruiter,
           contact,
         }),
-      })
+      }).then(data => console.log(data.data.rows[0].id))
     )
 
     // mutate(

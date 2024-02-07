@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   } = requestBody
 
   try {
-    await sql`
+    const res = await sql`
         INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact) VALUES (
             ${title},
             ${time},
@@ -31,9 +31,9 @@ export async function POST(request: Request) {
             ${company},
             ${recruiter},
             ${contact}
-        );`
-
-    return NextResponse.json({}, { status: 200 });
+        ) RETURNING id;`
+  
+    return NextResponse.json({data: res}, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
