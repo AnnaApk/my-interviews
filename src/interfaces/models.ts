@@ -1,15 +1,14 @@
-export interface IForm {
+export interface IVacancyForm {
   company: string;
   contact: string;
   date: string;
-  skills: string;
   description: string;
   recruiter: string;
   time: string;
   title: string;
 }
 
-export interface IVacancy extends IForm {
+export interface IVacancy extends IVacancyForm {
   id: number;
 }
 

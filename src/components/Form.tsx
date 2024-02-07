@@ -1,6 +1,6 @@
 "use client"
 
-import { IForm, ISkillForm } from '@/interfaces/models';
+import { IVacancyForm, ISkill} from '@/interfaces/models';
 import styles from './form.module.css';
 import {TextField, Button} from '@mui/material';
 import {DatePicker, TimePicker, LocalizationProvider} from '@mui/x-date-pickers';
@@ -9,8 +9,8 @@ import { FormEvent } from 'react';
 import MultipleSelectionSkills from './MultipleSelectionSkills';
 
 interface FormProps {
-  handleSubmit: (params: IForm) => void;
-  optionSkills: ISkillForm[] | undefined;
+  handleSubmit: (params: IVacancyForm) => void;
+  optionSkills: ISkill[] | undefined;
 }
 
 export default function Form({handleSubmit, optionSkills}:FormProps) {
@@ -24,7 +24,8 @@ export default function Form({handleSubmit, optionSkills}:FormProps) {
       formValues[key] = (value as string);
     });
     const { date, time, title, skills, description, company, recruiter, contact } = formValues;
-    handleSubmit({ date, time, title, skills, description, company, recruiter, contact })
+    console.log('skills', skills)
+    handleSubmit({ date, time, title, description, company, recruiter, contact })
   }
 
   return (

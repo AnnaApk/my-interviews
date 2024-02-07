@@ -15,7 +15,6 @@ export async function POST(request: Request) {
     title,
     time,
     date,
-    skills,
     description,
     company,
     recruiter,
@@ -24,11 +23,10 @@ export async function POST(request: Request) {
 
   try {
     await sql`
-        INSERT INTO vacancies (Title, Time, Date, Skills, Description, Company, Recruiter, Contact) VALUES (
+        INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact) VALUES (
             ${title},
             ${time},
             ${date},
-            ${skills},
             ${description},
             ${company},
             ${recruiter},
@@ -55,7 +53,7 @@ export async function DELETE(request: Request) {
 export async function GET() {
   try {
     const { rows: vac } = await sql`SELECT * FROM vacancies;`
-    const { rows: skills } = await sql`SELECT Skill, Grade_1, Grade_2, Grade_3, Grade_4, Grade_5 FROM skills;`
+    const { rows: skills } = await sql`SELECT * FROM skills;`
     return NextResponse.json({ data: vac , sk: skills}, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });

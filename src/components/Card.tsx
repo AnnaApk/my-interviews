@@ -26,7 +26,6 @@ export default function Card({ vacancy, handleDelete }: ICardProps) {
     date,
     time,
     title,
-    skills,
     description,
     company,
     recruiter,
@@ -52,7 +51,7 @@ export default function Card({ vacancy, handleDelete }: ICardProps) {
         <Item>{date}</Item>
         <Item>{time}</Item>
         <Item>{title}</Item>
-        <Item>{skills}</Item>
+        {/* <Item>{skills}</Item> */}
         <Item style={{whiteSpace:'pre-wrap'}}> {description}</Item>
         <Item>{company}</Item>
         <Item>{recruiter}</Item>

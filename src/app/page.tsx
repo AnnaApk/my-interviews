@@ -2,17 +2,18 @@
 import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
-import { IForm, IVacancy, ISkillForm } from '@/interfaces/models'
+import { IVacancyForm, IVacancy, ISkill } from '@/interfaces/models'
 import useSWR, { useSWRConfig }  from 'swr';
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Home () {
-  const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkillForm[] }>('/api/vacancies', fetcher);
+  const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkill[] }>('/api/vacancies', fetcher);
   
   const { mutate } = useSWRConfig();
 
-  function handleSubmitAddCard({date, time, title, skills, description, company, recruiter, contact}: IForm) {
+  function handleSubmitAddCard({date, time, title, description, company, recruiter, contact}: IVacancyForm) {
+
     mutate(
       '/api/vacancies',
       fetcher('/api/vacancies', {
@@ -21,7 +22,6 @@ export default function Home () {
           date,
           time,
           title,
-          skills,
           description,
           company,
           recruiter,
@@ -29,6 +29,16 @@ export default function Home () {
         }),
       })
     )
+
+    // mutate(
+    //   '/api/vacancies',
+    //   fetcher('/api/vacancies', {
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //       skills,
+    //     }),
+    //   })
+    // )
   }
 
   function handleDelete(id: number) {
