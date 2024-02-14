@@ -7,12 +7,23 @@ import useSWR, { useSWRConfig }  from 'swr';
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
+interface IPropsAddVac extends IVacancyForm {
+  skills: string;
+}
+
 export default function Home () {
   const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkill[] }>('/api/vacancies', fetcher);
   
   const { mutate } = useSWRConfig();
 
-  function handleSubmitAddCard({date, time, title, description, company, recruiter, contact}: IVacancyForm) {
+  function handleSubmitAddCard({date, time, title, skills, description, company, recruiter, contact}: IPropsAddVac) {
+    let id;
+
+    const reqBody = skills.split(',').map(key => {
+      const skillID = parseInt(key.slice(0 , key.length - 1))
+      const skillLevel = parseInt(key[key.length -1])
+      return {skillID, skillLevel}
+    })
 
     mutate(
       '/api/vacancies',
@@ -27,15 +38,32 @@ export default function Home () {
           recruiter,
           contact,
         }),
-      }).then(data => console.log(data.data.rows[0].id))
+      }).then(data => (id = data?.data.rows[0].id))
+      .then((id:number) => {
+        mutate(
+          `/api/vacancies/:${id}`,
+          fetcher(`/api/vacancies/:${id}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              vacancyID: id,
+              reqBody,
+            }),
+          })
+        )
+      })
     )
 
+    //console.log('skills', typeof skills, skills.split(','))
+   
+    // console.log('skills', reqBody)
+
     // mutate(
-    //   '/api/vacancies',
-    //   fetcher('/api/vacancies', {
+    //   `/api/vacancies/:${id}`,
+    //   fetcher(`/api/vacancies/:${id}`, {
     //     method: 'POST',
     //     body: JSON.stringify({
-    //       skills,
+    //       vacancyID: id,
+    //       reqBody,
     //     }),
     //   })
     // )

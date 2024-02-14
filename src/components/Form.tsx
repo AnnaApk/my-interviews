@@ -8,8 +8,12 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { FormEvent } from 'react';
 import MultipleSelectionSkills from './MultipleSelectionSkills';
 
+interface IPropsAddVac extends IVacancyForm {
+  skills: string;
+}
+
 interface FormProps {
-  handleSubmit: (params: IVacancyForm) => void;
+  handleSubmit: (params: IPropsAddVac) => void;
   optionSkills: ISkill[] | undefined;
 }
 
@@ -24,8 +28,7 @@ export default function Form({handleSubmit, optionSkills}:FormProps) {
       formValues[key] = (value as string);
     });
     const { date, time, title, skills, description, company, recruiter, contact } = formValues;
-    console.log('skills', skills)
-    handleSubmit({ date, time, title, description, company, recruiter, contact })
+    handleSubmit({ date, time, title, skills, description, company, recruiter, contact })
   }
 
   return (
