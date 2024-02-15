@@ -43,6 +43,7 @@ export async function DELETE(request: Request) {
   const requestBody = await request.json();
   const { id } = requestBody
   try {
+    await sql`DELETE FROM vacancy_skills WHERE Vacancy_id = ${id};`
     await sql`DELETE FROM vacancies WHERE id = ${id};`
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
