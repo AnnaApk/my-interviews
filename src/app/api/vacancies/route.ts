@@ -46,6 +46,7 @@ export async function DELETE(request: Request) {
     await sql`DELETE FROM vacancies WHERE id = ${id};`
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-import {sql} from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
 
 interface IEL {
@@ -13,28 +13,19 @@ export async function POST(request: Request) {
     reqBody
   } = requestBody
 
-  const values = reqBody.reduce((prev: string, el:IEL, index: number):string => {
+  const values:[number, number, number][] = reqBody.reduce((prev:[number, number, number][], el:IEL) => {
     const {skillID, skillLevel} = el;
-    let value = '';
-    if (index === reqBody.length - 1) {
-      value = `(${vacancyID}, ${skillID}, ${skillLevel})`
-    } else {
-      value = `(${vacancyID}, ${skillID}, ${skillLevel}),\n`
-    }
-    return (prev + value)
-  }, '')
-  // console.log(typeof vacancyID, typeof skillID, typeof skillLevel)
-  //  console.log(`
-  //  INSERT INTO vacancy_skills VALUES
-  //  ${values};`)
+    let value: [number, number, number] = [vacancyID, skillID, skillLevel];
+    prev.push(value);
+    return prev;
+  },[])
 
   try {
-    await sql`
-        INSERT INTO vacancy_skills VALUES
-        ${values};`
-
+    for (const value of values) {
+      await sql`INSERT INTO vacancy_skills VALUES (${value[0]}, ${value[1]}, ${value[2]});`;
+    }
     return NextResponse.json({}, { status: 200 });
-  } catch (error) {
+  } catch (error) { 
     return NextResponse.json({ error }, { status: 500 });
   }
 }
