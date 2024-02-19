@@ -56,7 +56,8 @@ export async function GET() {
   try {
     const { rows: vac } = await sql`SELECT * FROM vacancies;`
     const { rows: skills } = await sql`SELECT * FROM skills;`
-    return NextResponse.json({ data: vac , sk: skills}, { status: 200 });
+    const { rows: vacancySkills } = await sql`SELECT * FROM vacancy_skills;`
+    return NextResponse.json({ data: vac , sk: skills, vacancySkills: vacancySkills }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

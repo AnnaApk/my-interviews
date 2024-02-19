@@ -24,3 +24,9 @@ export interface ISkillForm {
 export interface ISkill extends ISkillForm {
   id: number;
 }
+
+export interface IVacancySkills {
+  vacancy_id: number;
+  skill_id: number;
+  skill_required_level: number;
+}
