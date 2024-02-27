@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   } = requestBody
 
   try {
-    await sql`
+    const res = await sql`
         INSERT INTO vacancies (Title, Time, Date, Description, Company, Recruiter, Contact) VALUES (
             ${title},
             ${time},
@@ -31,9 +31,9 @@ export async function POST(request: Request) {
             ${company},
             ${recruiter},
             ${contact}
-        );`
-
-    return NextResponse.json({}, { status: 200 });
+        ) RETURNING id;`
+  
+    return NextResponse.json({data: res}, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
@@ -43,17 +43,21 @@ export async function DELETE(request: Request) {
   const requestBody = await request.json();
   const { id } = requestBody
   try {
+    await sql`DELETE FROM vacancy_skills WHERE Vacancy_id = ${id};`
     await sql`DELETE FROM vacancies WHERE id = ${id};`
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error }, { status: 500 });
   }
 }
 
 export async function GET() {
   try {
-    const { rows } = await sql`SELECT * FROM vacancies;`
-    return NextResponse.json({ data: rows }, { status: 200 });
+    const { rows: vac } = await sql`SELECT * FROM vacancies;`
+    const { rows: skills } = await sql`SELECT * FROM skills;`
+    const { rows: vacancySkills } = await sql`SELECT * FROM vacancy_skills;`
+    return NextResponse.json({ data: vac , sk: skills, vacancySkills: vacancySkills }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

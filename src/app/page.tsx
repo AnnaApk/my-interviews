@@ -2,17 +2,29 @@
 import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
-import { IForm, IVacancy } from '@/interfaces/models'
+import { IVacancyForm, IVacancy, ISkill, IVacancySkills } from '@/interfaces/models'
 import useSWR, { useSWRConfig }  from 'swr';
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
+interface IPropsAddVac extends IVacancyForm {
+  skills: string;
+}
+
 export default function Home () {
-  const { error, isLoading, data } = useSWR<{ data: IVacancy[] }>('/api/vacancies', fetcher);
+  const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkill[], vacancySkills: IVacancySkills[] }>('/api/vacancies', fetcher);
   
   const { mutate } = useSWRConfig();
 
-  function handleSubmitAddCard({date, time, title, description, company, recruiter, contact}: IForm) {
+  function handleSubmitAddCard({date, time, title, skills, description, company, recruiter, contact}: IPropsAddVac) {
+    let id;
+
+    const reqBody = skills.split(',').map(key => {
+      const skillID = parseInt(key.slice(0 , key.length - 1))
+      const skillLevel = parseInt(key[key.length -1])
+      return {skillID, skillLevel}
+    })
+
     mutate(
       '/api/vacancies',
       fetcher('/api/vacancies', {
@@ -26,8 +38,35 @@ export default function Home () {
           recruiter,
           contact,
         }),
+      }).then(data => (id = data?.data.rows[0].id))
+      .then((id:number) => {
+        mutate(
+          `/api/vacancies/:${id}`,
+          fetcher(`/api/vacancies/:${id}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              vacancyID: id,
+              reqBody,
+            }),
+          })
+        )
       })
     )
+
+    //console.log('skills', typeof skills, skills.split(','))
+   
+    // console.log('skills', reqBody)
+
+    // mutate(
+    //   `/api/vacancies/:${id}`,
+    //   fetcher(`/api/vacancies/:${id}`, {
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //       vacancyID: id,
+    //       reqBody,
+    //     }),
+    //   })
+    // )
   }
 
   function handleDelete(id: number) {
@@ -52,11 +91,19 @@ export default function Home () {
 
         {isLoading && <p>Loading...</p>}
 
-        {data?.data?.map((vacancy) => (<Card key={vacancy.id} vacancy={vacancy} handleDelete={handleDelete} />))}
+        {data?.data?.map((vacancy) => {
+          const localSkills = data?.vacancySkills.filter(el => el.vacancy_id === vacancy.id)
+          const propsSkills = localSkills.map(el => {
+            const x = data.sk.filter(skill => skill.id === el.skill_id)
+            return `${x[0].skill} ${el.skill_required_level}`
+          })
+          return (<Card key={vacancy.id} vacancy={vacancy} skills={propsSkills} handleDelete={handleDelete} />)
+        }
+        )}
 
       </div>
       
-      <Form  handleSubmit={handleSubmitAddCard} />
+      <Form  handleSubmit={handleSubmitAddCard} optionSkills={data?.sk}  />
 
     </main>
 

@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 
 interface ICardProps {
   vacancy: IVacancy;
+  skills: string[];
   handleDelete: (id: number) => void;
 }
 
@@ -20,7 +21,7 @@ const Item = styled(Paper)(() => ({
   background: 'rgba(0, 0, 0, 0.1)',
 }));
 
-export default function Card({ vacancy, handleDelete }: ICardProps) {
+export default function Card({ vacancy, skills, handleDelete }: ICardProps) {
   const {
     id,
     date,
@@ -31,6 +32,11 @@ export default function Card({ vacancy, handleDelete }: ICardProps) {
     recruiter,
     contact,
   } = vacancy;
+
+  const renderSkills: string = skills.reduce((prev:string , el: string) => {
+    prev = prev + `/ / ` + el;
+    return prev;
+  }, '')
 
   return (
     <div>
@@ -51,6 +57,7 @@ export default function Card({ vacancy, handleDelete }: ICardProps) {
         <Item>{date}</Item>
         <Item>{time}</Item>
         <Item>{title}</Item>
+        <Item>{skills}</Item>
         <Item style={{whiteSpace:'pre-wrap'}}> {description}</Item>
         <Item>{company}</Item>
         <Item>{recruiter}</Item>
