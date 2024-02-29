@@ -51,9 +51,9 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
     const {
       target: { value }
     } = event;
-    console.log('value', value)
+    // console.log('value', value)
     // let val = skills2?.find((el) => el.key === parseInt(value[0]))
-    console.log('val', value)
+    // console.log('val', value)
     setSelectedSkills(typeof value === 'string' ? value.split(',') : value);
   };
 
