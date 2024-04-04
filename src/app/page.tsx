@@ -1,9 +1,11 @@
 'use client'
+
 import styles from './page.module.css'
 import Form from '@/components/Form'
 import Card from '@/components/Card'
 import { IVacancyForm, IVacancy, ISkill, IVacancySkills } from '@/interfaces/models'
 import useSWR, { useSWRConfig }  from 'swr';
+import AuthComponent from '@/components/AuthComponent'
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
@@ -11,7 +13,7 @@ interface IPropsAddVac extends IVacancyForm {
   skills: string;
 }
 
-export default function Home () {
+export default function Home (pageProps: any) {
   const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkill[], vacancySkills: IVacancySkills[] }>('/api/vacancies', fetcher);
   
   const { mutate } = useSWRConfig();
@@ -84,6 +86,8 @@ export default function Home () {
   return (
 
     <main className={styles.main}>
+
+      <AuthComponent />
       
       <div className={styles.card_container}>
 

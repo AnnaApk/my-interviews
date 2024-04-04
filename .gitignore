@@ -39,3 +39,7 @@ next-env.d.ts
 #settings
 .vscode
 .idea
+
+#some unusedcode
+/sign-in
+/sign-up
