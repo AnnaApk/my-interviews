@@ -8,11 +8,20 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import MultipleSelectionSkills from "@/components/MultipleSelectionSkills";
 
+///
+import { useSession } from "next-auth/react";
+///
+
 export default function Profile() {
   const [ nameIsEdit, setNameIsEdit ] = useState<boolean>(false);
   const [ experienceIsEdit, setExperienceIsEdit ] = useState<boolean>(false);
   const [ skillsIsEdit, setSkillsIsEdit ] = useState<boolean>(false);
   const [ developIsEdit, setDevelopIsEdit ] = useState<boolean>(false);
+
+  ///
+  const { data: session } = useSession();
+  console.log('session from profile', session?.user);
+  ///
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
