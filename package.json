@@ -13,6 +13,7 @@
     "migrate_list": "TS_NODE_COMPILER_OPTIONS='{ \"module\": \"commonjs\" }' knex migrate:list"
   },
   "dependencies": {
+    "@auth/pg-adapter": "^0.7.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/lab": "^5.0.0-alpha.158",
@@ -25,7 +26,7 @@
     "next": "14.0.4",
     "next-auth": "^4.24.7",
     "nodemailer": "^6.9.13",
-    "pg": "^8.11.3",
+    "pg": "^8.11.5",
     "react": "^18",
     "react-dom": "^18",
     "react-select": "^5.8.0",
