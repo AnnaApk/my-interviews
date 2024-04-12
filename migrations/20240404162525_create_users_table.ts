@@ -3,10 +3,13 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('users', function (table) {
-    table.increments('id');
-    table.string('email'); // .unique()
-    table.string('name');
-    table.string('role');
+    table.increments('id').primary();
+    table.string('name', 255).notNullable();
+    table.string('email', 255).notNullable().unique();
+    table.boolean('email_verified').defaultTo(false);
+    table.text('image');
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
 }
 
