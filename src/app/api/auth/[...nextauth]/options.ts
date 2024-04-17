@@ -6,11 +6,10 @@ import { Pool } from 'pg';
 import type { Adapter } from 'next-auth/adapters';
 
 const pool = new Pool({
-  host: 'localhost:3000/', //api/auth/[...nextauth]/route'
-  // user: 'database-user',
-  // max: 20,
-  // idleTimeoutMillis: 30000,
-  // connectionTimeoutMillis: 2000,
+  connectionString: process.env.POSTGRES_URL + '?sslmode=require',
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 })
 
 // about OAuth generally  https://www.youtube.com/watch?v=w2h54xz6Ndw
