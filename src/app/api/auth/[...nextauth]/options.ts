@@ -16,9 +16,9 @@ const pool = new Pool({
 
 export const options: NextAuthOptions = {
   adapter: PostgresAdapter(pool) as Adapter,
-  // session: {
-  //   strategy: 'database',
-  // },
+  session: {
+    strategy: 'jwt',
+  },
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
