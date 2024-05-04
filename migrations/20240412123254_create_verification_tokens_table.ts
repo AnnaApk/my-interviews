@@ -2,10 +2,9 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('verification_tokens', function(table) {
-    table.string('identifier', 255);
-    table.text('token').notNullable();
-    table.primary(['identifier', 'token']);
-    table.timestamp('expires', { useTz: true }).notNullable();
+    table.string('identifier', 255).primary().notNullable().unique();
+    table.text('token').primary().notNullable().unique();
+    table.timestamp('expires').notNullable();
   });
 }
 
