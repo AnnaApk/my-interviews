@@ -6,6 +6,8 @@ import Card from '@/components/Card'
 import { IVacancyForm, IVacancy, ISkill, IVacancySkills } from '@/interfaces/models'
 import useSWR, { useSWRConfig }  from 'swr';
 import AuthComponent from '@/components/AuthComponent'
+import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
@@ -17,6 +19,8 @@ export default function Home (pageProps: any) {
   const { error, isLoading, data } = useSWR<{ data: IVacancy[], sk: ISkill[], vacancySkills: IVacancySkills[] }>('/api/vacancies', fetcher);
   
   const { mutate } = useSWRConfig();
+
+  const { data: session } = useSession();
 
   function handleSubmitAddCard({date, time, title, skills, description, company, recruiter, contact}: IPropsAddVac) {
     let id;
@@ -54,21 +58,6 @@ export default function Home (pageProps: any) {
         )
       })
     )
-
-    //console.log('skills', typeof skills, skills.split(','))
-   
-    // console.log('skills', reqBody)
-
-    // mutate(
-    //   `/api/vacancies/:${id}`,
-    //   fetcher(`/api/vacancies/:${id}`, {
-    //     method: 'POST',
-    //     body: JSON.stringify({
-    //       vacancyID: id,
-    //       reqBody,
-    //     }),
-    //   })
-    // )
   }
 
   function handleDelete(id: number) {
@@ -88,6 +77,8 @@ export default function Home (pageProps: any) {
     <main className={styles.main}>
 
       <AuthComponent />
+
+      { session?.user ? <Link href='/profile'>Профиль пользователя</Link> : <></>}
       
       <div className={styles.card_container}>
 
