@@ -10,6 +10,7 @@ import MultipleSelectionSkills from "@/components/MultipleSelectionSkills";
 
 ///
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 ///
 
 export default function Profile() {
@@ -118,6 +119,8 @@ export default function Profile() {
 
   return(
     <>
+    <p>Вы авторизованы как {session?.user?.email}</p>
+    <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
     <h1>Личный кабинет</h1>
     <ol>
       <li>
