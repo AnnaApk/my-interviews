@@ -3,9 +3,9 @@ import type { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('sessions', function(table) {
     table.increments('id').primary();
-    table.timestamp('expires', { useTz: true }).notNullable();
-    table.text('session_token').notNullable();
-    table.integer('user_id').notNullable().references('id').inTable('users');
+    table.text('sessionToken').notNullable().unique();
+    table.integer('userId').notNullable().references('id').inTable('users');
+    table.timestamp('expires').notNullable();
   });
 }
 
