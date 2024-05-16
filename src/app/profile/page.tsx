@@ -19,10 +19,7 @@ export default function Profile() {
   const [ skillsIsEdit, setSkillsIsEdit ] = useState<boolean>(false);
   const [ developIsEdit, setDevelopIsEdit ] = useState<boolean>(false);
 
-  ///
   const { data: session } = useSession();
-  console.log('session from profile', session?.user);
-  ///
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
@@ -129,7 +126,7 @@ export default function Profile() {
             id="name"
             onSubmit={handleSubmit}>
             <TextField id="name" label="ФИО" name="name" />
-          </form> : <p>ФИО</p> 
+          </form> : session?.user ? <p>{session?.user.name}</p> : <p>ФИО</p> 
         }
         { nameIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('name')}>Редактировать</Button> }
         <Button>Очистить</Button>
