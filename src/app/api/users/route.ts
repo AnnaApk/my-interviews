@@ -22,3 +22,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
+
+export async function GET(request: Request) {
+
+  const parsedUrl = new URL(request.url);
+  const email = parsedUrl.searchParams.get('email');
+
+  try {
+    const {rows: user} = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`
+    return NextResponse.json({user: user}, { status: 200 }); // 
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  const requestBody = await request.json();
+  const { name, id } = requestBody;
+
+  try {
+    await sql`UPDATE users SET name = ${name} WHERE id =${id}`;
+    return NextResponse.json({}, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}

@@ -7,19 +7,27 @@ import { styled } from '@mui/system';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import MultipleSelectionSkills from "@/components/MultipleSelectionSkills";
+import styles from "./page.module.css";
 
-///
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-///
+import useSWR, { useSWRConfig }  from 'swr';
+
+import { IUser, ISkill, IVacancySkills } from '@/interfaces/models'
+import UserNameOnProfile from "@/components/UserNameOnProfile";
+
+const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Profile() {
-  const [ nameIsEdit, setNameIsEdit ] = useState<boolean>(false);
+  const { data: session } = useSession();
+  
+  const { error, isLoading, data } = useSWR<{ user: IUser[] , sk: ISkill[], vacancySkills: IVacancySkills[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
+  
+  const { mutate } = useSWRConfig();
+
   const [ experienceIsEdit, setExperienceIsEdit ] = useState<boolean>(false);
   const [ skillsIsEdit, setSkillsIsEdit ] = useState<boolean>(false);
   const [ developIsEdit, setDevelopIsEdit ] = useState<boolean>(false);
-
-  const { data: session } = useSession();
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
@@ -68,9 +76,6 @@ export default function Profile() {
 
   function handleClick(param:'name' | 'experience' | 'skills' | 'develop') {
     switch(param) {
-      case 'name':
-        setNameIsEdit(true)
-        break;
       case 'experience':
         setExperienceIsEdit(true)
         break;
@@ -91,11 +96,6 @@ export default function Profile() {
       formValues[key] = (value as string);
     });
     switch(e.currentTarget.id) {
-      case 'name':
-        const { name } = formValues;
-        setNameIsEdit(false);
-        console.log(name)
-        break;
       case 'experience':
         const { dateStart, dateEnd, company, achiev, stack } = formValues;
         setExperienceIsEdit(false);
@@ -114,25 +114,35 @@ export default function Profile() {
     }
   }
 
-  return(
-    <>
-    <p>Вы авторизованы как {session?.user?.email}</p>
-    <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
-    <h1>Личный кабинет</h1>
-    <ol>
-      <li>
-        { nameIsEdit ? 
-          <form 
-            id="name"
-            onSubmit={handleSubmit}>
-            <TextField id="name" label="ФИО" name="name" />
-          </form> : session?.user ? <p>{session?.user.name}</p> : <p>ФИО</p> 
-        }
-        { nameIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('name')}>Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li>
+  function handleNameChangeSubmit(name: string) {
+    mutate(`api/users/?email=${session?.user?.email}`,
+            fetcher(`api/users/?email=${session?.user?.email}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                name,
+                id: data?.user[0].id,
+              }),
+            }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+          )
 
-      <li>
+  }
+  console.log('user profile', data?.user)
+
+  return(
+
+    <div className={styles.block}>
+      { isLoading ? <p>isLoading ...</p> :
+        <>
+          <p>Вы авторизованы как {session?.user?.email}</p>
+          <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
+          <h1>Личный кабинет</h1>
+          <ol>
+
+            <li>
+              { data && <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> }
+            </li>
+
+      {/* <li>
       { experienceIsEdit ? 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <form 
@@ -149,11 +159,11 @@ export default function Profile() {
           </LocalizationProvider>
          : <p>Опыт работы</p> 
         }
-        { experienceIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('experience')}>Редактировать</Button> }
+        { experienceIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('experience')} >Редактировать</Button> }
         <Button>Очистить</Button>
-      </li>
+      </li> */}
 
-      <li>
+      {/* <li>
         { skillsIsEdit ? 
           <form 
             id="skills"
@@ -163,11 +173,11 @@ export default function Profile() {
             <Button type='submit'>Добавить</Button>
           </form> : <p>Навыки</p> 
         }
-        { skillsIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('skills')}>Редактировать</Button> }
+        { skillsIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('skills')} >Редактировать</Button> }
         <Button>Очистить</Button>
-      </li>
+      </li> */}
 
-      <li>
+      {/* <li>
         { developIsEdit ? 
           <form 
             id="develop"
@@ -177,10 +187,15 @@ export default function Profile() {
             <Button type='submit'>Добавить</Button>
           </form> : <p>План развития</p>
         }
-        { developIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('develop')}>Редактировать</Button> }
+        { developIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('develop')} >Редактировать</Button> }
         <Button>Очистить</Button>
-      </li>
+      </li> */}
+
     </ol>
-    </>
+        </>
+      }
+   
+    </div>
+    
   )
 }
