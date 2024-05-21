@@ -30,3 +30,11 @@ export interface IVacancySkills {
   skill_id: number;
   skill_required_level: number;
 }
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  emailVerified: null;
+  image: string | null;
+}
