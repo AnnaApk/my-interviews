@@ -8,45 +8,36 @@ interface IProps {
 }
 export default function UserNameOnProfile({user, handleSubmit}:IProps) {
 
-    
+  const [ nameIsEdit, setNameIsEdit ] = useState<boolean>(false);
 
-    const [ nameIsEdit, setNameIsEdit ] = useState<boolean>(false);
-
-    function handleClick(param:'name' | 'experience' | 'skills' | 'develop') {
-        switch(param) {
-          case 'name':
-            setNameIsEdit(true)
-            break;
-       
-        }
-      }
+  function handleClick() {
+    setNameIsEdit(true)
+  }
     
-    function onSubmit(e:FormEvent<HTMLFormElement>) {
-      e.preventDefault();
+  function onSubmit(e:FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues: Record<string, string> = {};
     formData.forEach((value, key) => {
       formValues[key] = (value as string);
     });
-      handleSubmit(formValues.name)
-      setNameIsEdit(false)
-    }
+    handleSubmit(formValues.name)
+    setNameIsEdit(false)
+  }
     
-    return (
-        <>
-            { nameIsEdit ? 
-            <form 
-                // className={styles.block}
-                id="name"
-                onSubmit={onSubmit}>
-                <TextField id="name" label='ФИО' name="name" placeholder="" />
-                <Button type="submit">Изменить</Button>
-            </form> : <p>{user.name}</p>
-            }
-            { nameIsEdit ? 
-                <Button>Очистить</Button> : 
-                <Button onClick={ () => handleClick('name')} >Редактировать</Button>
-            } 
-        </>
-    )
+  return (
+    <>
+      { nameIsEdit ? 
+        <form 
+          // className={styles.block}
+          id="name"
+          onSubmit={onSubmit}>
+          <TextField id="name" label='ФИО' name="name" placeholder="" />
+          <Button type="submit">Изменить</Button>
+        </form> :
+        <p>{user.name}</p>
+      }
+      { !nameIsEdit && <Button onClick={handleClick} >Редактировать</Button> } 
+    </>
+  )
 }

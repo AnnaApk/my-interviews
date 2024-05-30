@@ -1,5 +1,7 @@
 {
-    "workbench.sash.size": 4
+  "workbench.sash.size": 2,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false
 } // {
 //   "editor.fontSize": 12
 // }

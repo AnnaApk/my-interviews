@@ -38,3 +38,13 @@ export interface IUser {
   emailVerified: null;
   image: string | null;
 }
+
+export interface IExperience {
+  user_id: number;
+  date_start: string;
+  date_end: string;
+  company: string;
+  achiev: string;
+  stack: string;
+  id: number;
+}
