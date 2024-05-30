@@ -30,7 +30,14 @@ export async function GET(request: Request) {
 
   try {
     const {rows: user} = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`
-    return NextResponse.json({user: user}, { status: 200 }); // 
+    let { id } = user[0];
+    let experience;
+    if (user) {
+      const {rows: experienceRow } = await sql`SELECT * FROM users_experience WHERE user_id = ${id}`
+      experience = experienceRow;
+    }
+    // console.log('api.profile experience from rows', experience)
+    return NextResponse.json({user: user, experience: experience}, { status: 200 }); // 
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

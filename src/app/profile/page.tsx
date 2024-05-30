@@ -13,19 +13,19 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useSWR, { useSWRConfig }  from 'swr';
 
-import { IUser, ISkill, IVacancySkills } from '@/interfaces/models'
+import { IUser, IVacancySkills, IExperience } from '@/interfaces/models'
 import UserNameOnProfile from "@/components/UserNameOnProfile";
+import UserExperienceOnProfile from "@/components/UserExperienceOnProfile";
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Profile() {
   const { data: session } = useSession();
   
-  const { error, isLoading, data } = useSWR<{ user: IUser[] , sk: ISkill[], vacancySkills: IVacancySkills[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
+  const { error, isLoading, data } = useSWR<{ user: IUser[] , experience: IExperience[], vacancySkills: IVacancySkills[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
   
   const { mutate } = useSWRConfig();
 
-  const [ experienceIsEdit, setExperienceIsEdit ] = useState<boolean>(false);
   const [ skillsIsEdit, setSkillsIsEdit ] = useState<boolean>(false);
   const [ developIsEdit, setDevelopIsEdit ] = useState<boolean>(false);
 
@@ -74,42 +74,13 @@ export default function Profile() {
     }
   ]
 
-  function handleClick(param:'name' | 'experience' | 'skills' | 'develop') {
+  function handleClick(param:'skills' | 'develop') {
     switch(param) {
-      case 'experience':
-        setExperienceIsEdit(true)
-        break;
       case 'skills':
         setSkillsIsEdit(true)
         break;
       case 'develop':
         setDevelopIsEdit(true)
-        break;
-    }
-  }
-
-  function handleSubmit(e:FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const formValues: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      formValues[key] = (value as string);
-    });
-    switch(e.currentTarget.id) {
-      case 'experience':
-        const { dateStart, dateEnd, company, achiev, stack } = formValues;
-        setExperienceIsEdit(false);
-        console.log( dateStart, dateEnd, company, achiev, stack )
-        break;
-      case 'skills':
-        const { skills } = formValues;
-        setSkillsIsEdit(false);
-        console.log(skills)
-        break;
-      case 'develop':
-        const { skills:develop } = formValues;
-        setDevelopIsEdit(false);
-        console.log(develop)
         break;
     }
   }
@@ -124,9 +95,35 @@ export default function Profile() {
               }),
             }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
           )
-
   }
-  console.log('user profile', data?.user)
+
+  function handleAddExperience({dateStart, dateEnd, company, achiev, stack}:{dateStart: string;dateEnd:string;company:string;achiev:string;stack:string;}) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: data?.user[0].id,
+          dateStart,
+          dateEnd,
+          company,
+          achiev,
+          stack, 
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
+
+  function handleDeleteExperience(id: number) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          id
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
+  // console.log('user profile', data?.user)
 
   return(
 
@@ -136,32 +133,20 @@ export default function Profile() {
           <p>Вы авторизованы как {session?.user?.email}</p>
           <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
           <h1>Личный кабинет</h1>
-          <ol>
 
-            <li>
-              { data && <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> }
-            </li>
+          {
+            data && 
+            <ol>
+              <li>
+                <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> 
+              </li>
+              <li>
+                <UserExperienceOnProfile experience={data.experience} handleAddSubmit={handleAddExperience} handleDelete={handleDeleteExperience} />
+              </li>
+            </ol>
+          }
 
-      {/* <li>
-      { experienceIsEdit ? 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <form 
-              id="experience"
-              onSubmit={handleSubmit}
-            >
-              <DatePicker name="dateStart" label="Начало периода" />
-              <DatePicker name="dateEnd" label="Конец периода" />
-              <TextField id="company" label="Компания" name="company" />
-              <Textarea name='achiev' minRows={2} placeholder='Достижения' />
-              <Textarea name='stack' minRows={2} placeholder='Cтэк'/>
-              <Button type='submit'>Добавить</Button>
-            </form>
-          </LocalizationProvider>
-         : <p>Опыт работы</p> 
-        }
-        { experienceIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('experience')} >Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li> */}
+    <ol>
 
       {/* <li>
         { skillsIsEdit ? 
