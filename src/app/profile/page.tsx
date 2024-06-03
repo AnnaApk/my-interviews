@@ -13,7 +13,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useSWR, { useSWRConfig }  from 'swr';
 
-import { IUser, IVacancySkills, IExperience } from '@/interfaces/models'
+import { IUser, IVacancySkills, IExperience, IExperienceForm } from '@/interfaces/models'
 import UserNameOnProfile from "@/components/UserNameOnProfile";
 import UserExperienceOnProfile from "@/components/UserExperienceOnProfile";
 
@@ -97,14 +97,14 @@ export default function Profile() {
           )
   }
 
-  function handleAddExperience({dateStart, dateEnd, company, achiev, stack}:{dateStart: string;dateEnd:string;company:string;achiev:string;stack:string;}) {
+  function handleAddExperience({date_start, date_end, company, achiev, stack}: IExperienceForm) {
     mutate(`api/users/:${data?.user[0].id}/experience`,
       fetcher(`api/users/:${data?.user[0].id}/experience`, {
         method: 'POST',
         body: JSON.stringify({
           user_id: data?.user[0].id,
-          dateStart,
-          dateEnd,
+          date_start,
+          date_end,
           company,
           achiev,
           stack, 
@@ -123,7 +123,17 @@ export default function Profile() {
       }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
     )
   }
-  // console.log('user profile', data?.user)
+
+  function handleEditExperience({ id, date_start, date_end, company, achiev, stack}:IExperience) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id, date_start, date_end, company, achiev, stack,
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
 
   return(
 
@@ -141,7 +151,12 @@ export default function Profile() {
                 <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> 
               </li>
               <li>
-                <UserExperienceOnProfile experience={data.experience} handleAddSubmit={handleAddExperience} handleDelete={handleDeleteExperience} />
+                <UserExperienceOnProfile
+                  experience={data.experience}
+                  handleAddSubmit={handleAddExperience}
+                  handleDelete={handleDeleteExperience}
+                  handleEditExperience={handleEditExperience}
+                />
               </li>
             </ol>
           }

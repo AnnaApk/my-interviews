@@ -5,8 +5,8 @@ export async function POST(request: Request) {
   const requestBody = await request.json();
   const {
     user_id,
-    dateStart,
-    dateEnd,
+    date_start,
+    date_end,
     company,
     achiev,
     stack,
@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     const res = await sql`
         INSERT INTO users_experience (User_id, Date_start, Date_end, Company, Achiev, Stack) VALUES (
             ${user_id},
-            ${dateStart},
-            ${dateEnd},
+            ${date_start},
+            ${date_end},
             ${company},
             ${achiev},
             ${stack}
@@ -39,6 +39,32 @@ export async function DELETE(request: Request) {
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  const requestBody = await request.json();
+  const {
+    id,
+    date_start,
+    date_end,
+    company,
+    achiev,
+    stack,
+  } = requestBody
+
+  try {
+    await sql`
+      UPDATE users_experience
+      SET Date_start = ${date_start},
+          Date_end = ${date_end},
+          Company = ${company},
+          Achiev = ${achiev},
+          Stack = ${stack}
+      WHERE id = ${id};`
+    return NextResponse.json({}, { status: 200 });
+  } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }
 }

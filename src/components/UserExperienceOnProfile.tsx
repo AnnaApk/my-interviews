@@ -1,26 +1,21 @@
-import { IExperience } from "@/interfaces/models";
+import { IExperience, IExperienceForm } from "@/interfaces/models";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Button, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@mui/material";
 import { useState, FormEvent } from "react";
-import Image from 'next/image';
-import deleteIcon from  '../../public/icons8-delete.svg';
-import editIcon from  '../../public/icons8-edit.svg';
+
+import ExperienceRowInTable from "./ExperienceRowInTable";
 
 interface IProps {
   experience: IExperience[];
-  handleAddSubmit: ({dateStart, dateEnd, company, achiev, stack}: {dateStart: string;
-   dateEnd:string;
-   company:string;
-   achiev:string;
-   stack:string;
-  }) => void;
+  handleAddSubmit: ({date_start, date_end, company, achiev, stack}:IExperienceForm) => void;
   handleDelete: (id: number) => void;
+  handleEditExperience: ({id, date_start, date_end, company, achiev, stack}:IExperience) => void;
 }
 
-export default function UserExperienceOnProfile({experience, handleAddSubmit, handleDelete}: IProps) {
+export default function UserExperienceOnProfile({experience, handleAddSubmit, handleDelete, handleEditExperience }: IProps) {
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
 
   const Textarea = styled(TextareaAutosize)(() => `
@@ -58,8 +53,8 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
     formData.forEach((value, key) => {
       formValues[key] = (value as string);
     });
-    const { dateStart, dateEnd, company, achiev, stack } = formValues;
-    handleAddSubmit({dateStart, dateEnd, company, achiev, stack})
+    const { date_start, date_end, company, achiev, stack } = formValues;
+    handleAddSubmit({date_start, date_end, company, achiev, stack})
     setIsEdit(false)
   }
 
@@ -73,9 +68,7 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
         <TableHead>
           <TableRow>
             <TableCell></TableCell> 
-            <TableCell>C</TableCell> 
-            {/* align="right" */}
-            <TableCell>По</TableCell>
+            <TableCell>C-По</TableCell> 
             <TableCell>Компания</TableCell>
             <TableCell>Достижения</TableCell>
             <TableCell>Стэк</TableCell>
@@ -84,28 +77,9 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
         </TableHead>
         <TableBody>
           {experience?.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell style={{padding: 0}}>
-                <Button>
-                <Image src={editIcon} alt='Иконка удаления' width={20}/>
-                </Button>
-              </TableCell>
-              <TableCell component="th" scope="row">
-                {row.date_start}
-              </TableCell>
-              <TableCell>{row.date_end}</TableCell>
-              <TableCell>{row.company}</TableCell>
-              <TableCell>{row.achiev}</TableCell>
-              <TableCell>{row.stack}</TableCell>
-              <TableCell  style={{padding: 0}}>
-                <Button onClick={() => handleDelete(row.id)}>
-                <Image src={deleteIcon} alt='Иконка удаления' width={20}/>
-                </Button>
-              </TableCell>
-            </TableRow>
+            <ExperienceRowInTable key={row.id} row={row} handleDelete={handleDelete}
+            handleEditExperience={handleEditExperience}
+            />
           ))}
         </TableBody>
       </Table>  } 
@@ -117,8 +91,8 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
           onSubmit={handleSubmit}
           style={{display: 'grid', gap: 15 }}
         >
-          <DatePicker name="dateStart" label="Начало периода" />
-          <DatePicker name="dateEnd" label="Конец периода" />
+          <DatePicker name="date_start" label="Начало периода" />
+          <DatePicker name="date_end" label="Конец периода" />
           <TextField id="company" label="Компания" name="company" />
           <Textarea name='achiev' minRows={2} placeholder='Достижения' />
           <Textarea name='stack' minRows={2} placeholder='Cтэк'/>
