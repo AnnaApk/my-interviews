@@ -39,12 +39,16 @@ export interface IUser {
   image: string | null;
 }
 
-export interface IExperience {
-  user_id: number;
+export interface IExperienceForm {
   date_start: string;
   date_end: string;
   company: string;
   achiev: string;
   stack: string;
+}
+export interface IExperience extends IExperienceForm {
   id: number;
+}
+export interface IExperienceFull extends IExperience{
+  user_id: number;
 }
