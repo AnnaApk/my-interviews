@@ -47,8 +47,8 @@ function handleSubmit(e:FormEvent<HTMLFormElement>) {
   formData.forEach((value, key) => {
     formValues[key] = (value as string);
   });
-  const { date_start, date_end, company, achiev, stack } = formValues;
-  handleChangeExp({date_start, date_end, company, achiev, stack})
+  const { date_start, date_end, company, achieve, stack } = formValues;
+  handleChangeExp({date_start, date_end, company, achieve, stack})
 
 }
 
@@ -66,7 +66,7 @@ function handleSubmit(e:FormEvent<HTMLFormElement>) {
           <DatePicker name="date_start" label="Начало периода" defaultValue={dayjs(el.date_start)} />
           <DatePicker name="date_end" label="Конец периода" defaultValue={dayjs(el.date_end)} />
           <TextField id="company" label="Компания" name="company" defaultValue={el.company} />
-          <Textarea name='achiev' minRows={2} placeholder='Достижения' defaultValue={el.achiev} />
+          <Textarea name='achieve' minRows={2} placeholder='Достижения' defaultValue={el.achieve} />
           <Textarea name='stack' minRows={2} placeholder='Cтэк' defaultValue={el.stack}/>
           <Button type='submit'>Редактировать</Button>
         </form>

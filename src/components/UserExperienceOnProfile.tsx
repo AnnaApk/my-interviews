@@ -10,9 +10,9 @@ import ExperienceRowInTable from "./ExperienceRowInTable";
 
 interface IProps {
   experience: IExperience[];
-  handleAddSubmit: ({date_start, date_end, company, achiev, stack}:IExperienceForm) => void;
+  handleAddSubmit: ({date_start, date_end, company, achieve, stack}:IExperienceForm) => void;
   handleDelete: (id: number) => void;
-  handleEditExperience: ({id, date_start, date_end, company, achiev, stack}:IExperience) => void;
+  handleEditExperience: ({id, date_start, date_end, company, achieve, stack}:IExperience) => void;
 }
 
 export default function UserExperienceOnProfile({experience, handleAddSubmit, handleDelete, handleEditExperience }: IProps) {
@@ -53,8 +53,8 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
     formData.forEach((value, key) => {
       formValues[key] = (value as string);
     });
-    const { date_start, date_end, company, achiev, stack } = formValues;
-    handleAddSubmit({date_start, date_end, company, achiev, stack})
+    const { date_start, date_end, company, achieve, stack } = formValues;
+    handleAddSubmit({date_start, date_end, company, achieve, stack})
     setIsEdit(false)
   }
 
@@ -94,7 +94,7 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
           <DatePicker name="date_start" label="Начало периода" />
           <DatePicker name="date_end" label="Конец периода" />
           <TextField id="company" label="Компания" name="company" />
-          <Textarea name='achiev' minRows={2} placeholder='Достижения' />
+          <Textarea name='achieve' minRows={2} placeholder='Достижения' />
           <Textarea name='stack' minRows={2} placeholder='Cтэк'/>
           <Button type='submit'>Добавить</Button>
         </form>

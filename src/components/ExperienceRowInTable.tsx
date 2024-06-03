@@ -42,7 +42,7 @@ export default function ExperienceRowInTable({row, handleDelete, handleEditExper
         <p style={{margin: 0}}>{row.date_end}</p>
       </TableCell>
       <TableCell>{row.company}</TableCell>
-      <TableCell>{row.achiev}</TableCell>
+      <TableCell>{row.achieve}</TableCell>
       <TableCell>{row.stack}</TableCell>
       <TableCell  style={{padding: 0}}>
         <Button onClick={() => handleDelete(row.id)}>
