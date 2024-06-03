@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     date_start,
     date_end,
     company,
-    achiev,
+    achieve,
     stack,
   } = requestBody
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
             ${date_start},
             ${date_end},
             ${company},
-            ${achiev},
+            ${achieve},
             ${stack}
         ) RETURNING id;`
   
@@ -50,7 +50,7 @@ export async function PATCH(request: Request) {
     date_start,
     date_end,
     company,
-    achiev,
+    achieve,
     stack,
   } = requestBody
 
@@ -60,7 +60,7 @@ export async function PATCH(request: Request) {
       SET Date_start = ${date_start},
           Date_end = ${date_end},
           Company = ${company},
-          Achiev = ${achiev},
+          Achiev = ${achieve},
           Stack = ${stack}
       WHERE id = ${id};`
     return NextResponse.json({}, { status: 200 });

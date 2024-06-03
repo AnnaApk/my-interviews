@@ -43,7 +43,7 @@ export interface IExperienceForm {
   date_start: string;
   date_end: string;
   company: string;
-  achiev: string;
+  achieve: string;
   stack: string;
 }
 export interface IExperience extends IExperienceForm {

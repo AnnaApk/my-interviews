@@ -97,7 +97,7 @@ export default function Profile() {
           )
   }
 
-  function handleAddExperience({date_start, date_end, company, achiev, stack}: IExperienceForm) {
+  function handleAddExperience({date_start, date_end, company, achieve, stack}: IExperienceForm) {
     mutate(`api/users/:${data?.user[0].id}/experience`,
       fetcher(`api/users/:${data?.user[0].id}/experience`, {
         method: 'POST',
@@ -106,7 +106,7 @@ export default function Profile() {
           date_start,
           date_end,
           company,
-          achiev,
+          achieve,
           stack, 
         })
       }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
@@ -124,12 +124,12 @@ export default function Profile() {
     )
   }
 
-  function handleEditExperience({ id, date_start, date_end, company, achiev, stack}:IExperience) {
+  function handleEditExperience({ id, date_start, date_end, company, achieve, stack}:IExperience) {
     mutate(`api/users/:${data?.user[0].id}/experience`,
       fetcher(`api/users/:${data?.user[0].id}/experience`, {
         method: 'PATCH',
         body: JSON.stringify({
-          id, date_start, date_end, company, achiev, stack,
+          id, date_start, date_end, company, achieve, stack,
         })
       }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
     )
