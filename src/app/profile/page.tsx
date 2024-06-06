@@ -13,16 +13,18 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useSWR, { useSWRConfig }  from 'swr';
 
-import { IUser, IVacancySkills, IExperience, IExperienceForm } from '@/interfaces/models'
+import { IUser, ISkill, IExperience, IExperienceForm, IUserSkill } from '@/interfaces/models'
 import UserNameOnProfile from "@/components/UserNameOnProfile";
 import UserExperienceOnProfile from "@/components/UserExperienceOnProfile";
+import SkillsOfUser from "@/components/SkillsOfUser";
+import { noop } from "swr/_internal";
 
 const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Profile() {
   const { data: session } = useSession();
   
-  const { error, isLoading, data } = useSWR<{ user: IUser[] , experience: IExperience[], vacancySkills: IVacancySkills[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
+  const { error, isLoading, data } = useSWR<{ user: IUser[] , experience: IExperience[], skills: ISkill[], userSkills: IUserSkill[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
   
   const { mutate } = useSWRConfig();
 
@@ -52,27 +54,6 @@ export default function Profile() {
     }
   `,
   );
-
-  const skills = [
-    {
-      id:1,
-      skill: 'html',
-      grade_1:'test 1',
-      grade_2:'test 2',
-      grade_3:'test 3',
-      grade_4:'test 4',
-      grade_5:'test 5'
-    },
-    {
-      id:2,
-      skill: 'css',
-      grade_1:'test 1',
-      grade_2:'test 2',
-      grade_3:'test 3',
-      grade_4:'test 4',
-      grade_5:'test 5'
-    }
-  ]
 
   function handleClick(param:'skills' | 'develop') {
     switch(param) {
@@ -135,6 +116,35 @@ export default function Profile() {
     )
   }
 
+  function handleAddUserSkills(skills: string) {
+    const reqBody = skills.split(',').map(key => {
+      const skillID = parseInt(key.slice(0 , key.length - 1))
+      const skillLevel = parseInt(key[key.length -1])
+      return {skillID, skillLevel}
+    })
+    mutate(`api/users/:${data?.user[0].id}/skulls`,
+    fetcher(`api/users/:${data?.user[0].id}/skills`, {
+      method: 'POST',
+      body: JSON.stringify({
+        userID: data?.user[0].id,
+        reqBody,
+      })
+    }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+  )
+  }
+
+  function handleDeleteUserSkill(skillID: number) {
+    mutate(`api/users/:${data?.user[0].id}/skulls`,
+    fetcher(`api/users/:${data?.user[0].id}/skills`, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        userID: data?.user[0].id,
+        skillID,
+      })
+    }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+  )
+  }
+
   return(
 
     <div className={styles.block}>
@@ -146,7 +156,7 @@ export default function Profile() {
 
           {
             data && 
-            <ol>
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
               <li>
                 <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> 
               </li>
@@ -158,44 +168,35 @@ export default function Profile() {
                   handleEditExperience={handleEditExperience}
                 />
               </li>
-            </ol>
+              <li>
+                <SkillsOfUser 
+                  skills={data.skills}
+                  userSkills={data.userSkills}
+                  handleAddSkills={handleAddUserSkills}
+                  handleDelete={handleDeleteUserSkill}
+                />
+              </li>
+
+            </ul>
           }
 
-    <ol>
-
-      {/* <li>
+    {/* <ol>
+      <li>
         { skillsIsEdit ? 
           <form 
             id="skills"
-            onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
           >
-            <MultipleSelectionSkills optionSkills={skills} />
+            <MultipleSelectionSkills optionSkills={data?.skills} />
             <Button type='submit'>Добавить</Button>
           </form> : <p>Навыки</p> 
         }
         { skillsIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('skills')} >Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li> */}
-
-      {/* <li>
-        { developIsEdit ? 
-          <form 
-            id="develop"
-            onSubmit={handleSubmit}
-          >
-            <MultipleSelectionSkills optionSkills={skills} />
-            <Button type='submit'>Добавить</Button>
-          </form> : <p>План развития</p>
-        }
-        { developIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('develop')} >Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li> */}
-
-    </ol>
+      </li>
+    </ol> */}
         </>
       }
    
     </div>
-    
   )
 }

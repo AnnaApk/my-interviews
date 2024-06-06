@@ -31,6 +31,12 @@ export interface IVacancySkills {
   skill_required_level: number;
 }
 
+export interface IUserSkill {
+  user_id: number;
+  skill_id: number;
+  skill_level: number;
+}
+
 export interface IUser {
   id: number;
   name: string;

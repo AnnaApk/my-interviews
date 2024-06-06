@@ -34,7 +34,7 @@ export default function Card({ vacancy, skills, handleDelete }: ICardProps) {
   } = vacancy;
 
   const renderSkills: string = skills.reduce((prev:string , el: string) => {
-    prev = prev + `/ / ` + el;
+    prev = prev + `  ` + el;
     return prev;
   }, '')
 
@@ -57,7 +57,7 @@ export default function Card({ vacancy, skills, handleDelete }: ICardProps) {
         <Item>{date}</Item>
         <Item>{time}</Item>
         <Item>{title}</Item>
-        <Item>{skills}</Item>
+        <Item>{renderSkills}</Item>
         <Item style={{whiteSpace:'pre-wrap'}}> {description}</Item>
         <Item>{company}</Item>
         <Item>{recruiter}</Item>

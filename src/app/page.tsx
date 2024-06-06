@@ -90,7 +90,7 @@ export default function Home (pageProps: any) {
           const localSkills = data?.vacancySkills.filter(el => el.vacancy_id === vacancy.id)
           const propsSkills = localSkills.map(el => {
             const x = data.sk.filter(skill => skill.id === el.skill_id)
-            return `${x[0].skill} ${el.skill_required_level}`
+            return `${x[0].skill}-${el.skill_required_level}`
           })
           return (<Card key={vacancy.id} vacancy={vacancy} skills={propsSkills} handleDelete={handleDelete} />)
         }
