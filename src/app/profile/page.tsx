@@ -7,19 +7,29 @@ import { styled } from '@mui/system';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import MultipleSelectionSkills from "@/components/MultipleSelectionSkills";
+import styles from "./page.module.css";
 
-///
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-///
+import useSWR, { useSWRConfig }  from 'swr';
+
+import { IUser, ISkill, IExperience, IExperienceForm, IUserSkill } from '@/interfaces/models'
+import UserNameOnProfile from "@/components/UserNameOnProfile";
+import UserExperienceOnProfile from "@/components/UserExperienceOnProfile";
+import SkillsOfUser from "@/components/SkillsOfUser";
+import { noop } from "swr/_internal";
+
+const fetcher = (url: string, init?: RequestInit) => fetch(url, init).then((responseStream) => responseStream.json())
 
 export default function Profile() {
-  const [ nameIsEdit, setNameIsEdit ] = useState<boolean>(false);
-  const [ experienceIsEdit, setExperienceIsEdit ] = useState<boolean>(false);
+  const { data: session } = useSession();
+  
+  const { error, isLoading, data } = useSWR<{ user: IUser[] , experience: IExperience[], skills: ISkill[], userSkills: IUserSkill[] }>(`/api/users/?email=${session?.user?.email}`, fetcher);
+  
+  const { mutate } = useSWRConfig();
+
   const [ skillsIsEdit, setSkillsIsEdit ] = useState<boolean>(false);
   const [ developIsEdit, setDevelopIsEdit ] = useState<boolean>(false);
-
-  const { data: session } = useSession();
 
   const Textarea = styled(TextareaAutosize)(() => `
     box-sizing: border-box;
@@ -45,35 +55,8 @@ export default function Profile() {
   `,
   );
 
-  const skills = [
-    {
-      id:1,
-      skill: 'html',
-      grade_1:'test 1',
-      grade_2:'test 2',
-      grade_3:'test 3',
-      grade_4:'test 4',
-      grade_5:'test 5'
-    },
-    {
-      id:2,
-      skill: 'css',
-      grade_1:'test 1',
-      grade_2:'test 2',
-      grade_3:'test 3',
-      grade_4:'test 4',
-      grade_5:'test 5'
-    }
-  ]
-
-  function handleClick(param:'name' | 'experience' | 'skills' | 'develop') {
+  function handleClick(param:'skills' | 'develop') {
     switch(param) {
-      case 'name':
-        setNameIsEdit(true)
-        break;
-      case 'experience':
-        setExperienceIsEdit(true)
-        break;
       case 'skills':
         setSkillsIsEdit(true)
         break;
@@ -83,104 +66,137 @@ export default function Profile() {
     }
   }
 
-  function handleSubmit(e:FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const formValues: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      formValues[key] = (value as string);
-    });
-    switch(e.currentTarget.id) {
-      case 'name':
-        const { name } = formValues;
-        setNameIsEdit(false);
-        console.log(name)
-        break;
-      case 'experience':
-        const { dateStart, dateEnd, company, achiev, stack } = formValues;
-        setExperienceIsEdit(false);
-        console.log( dateStart, dateEnd, company, achiev, stack )
-        break;
-      case 'skills':
-        const { skills } = formValues;
-        setSkillsIsEdit(false);
-        console.log(skills)
-        break;
-      case 'develop':
-        const { skills:develop } = formValues;
-        setDevelopIsEdit(false);
-        console.log(develop)
-        break;
-    }
+  function handleNameChangeSubmit(name: string) {
+    mutate(`api/users/?email=${session?.user?.email}`,
+            fetcher(`api/users/?email=${session?.user?.email}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                name,
+                id: data?.user[0].id,
+              }),
+            }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+          )
+  }
+
+  function handleAddExperience({date_start, date_end, company, achieve, stack}: IExperienceForm) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: data?.user[0].id,
+          date_start,
+          date_end,
+          company,
+          achieve,
+          stack, 
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
+
+  function handleDeleteExperience(id: number) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+          id
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
+
+  function handleEditExperience({ id, date_start, date_end, company, achieve, stack}:IExperience) {
+    mutate(`api/users/:${data?.user[0].id}/experience`,
+      fetcher(`api/users/:${data?.user[0].id}/experience`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          id, date_start, date_end, company, achieve, stack,
+        })
+      }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+    )
+  }
+
+  function handleAddUserSkills(skills: string) {
+    const reqBody = skills.split(',').map(key => {
+      const skillID = parseInt(key.slice(0 , key.length - 1))
+      const skillLevel = parseInt(key[key.length -1])
+      return {skillID, skillLevel}
+    })
+    mutate(`api/users/:${data?.user[0].id}/skulls`,
+    fetcher(`api/users/:${data?.user[0].id}/skills`, {
+      method: 'POST',
+      body: JSON.stringify({
+        userID: data?.user[0].id,
+        reqBody,
+      })
+    }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+  )
+  }
+
+  function handleDeleteUserSkill(skillID: number) {
+    mutate(`api/users/:${data?.user[0].id}/skulls`,
+    fetcher(`api/users/:${data?.user[0].id}/skills`, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        userID: data?.user[0].id,
+        skillID,
+      })
+    }).then(()=> mutate(`/api/users/?email=${session?.user?.email}`))
+  )
   }
 
   return(
-    <>
-    <p>Вы авторизованы как {session?.user?.email}</p>
-    <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
-    <h1>Личный кабинет</h1>
-    <ol>
-      <li>
-        { nameIsEdit ? 
-          <form 
-            id="name"
-            onSubmit={handleSubmit}>
-            <TextField id="name" label="ФИО" name="name" />
-          </form> : session?.user ? <p>{session?.user.name}</p> : <p>ФИО</p> 
-        }
-        { nameIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('name')}>Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li>
 
-      <li>
-      { experienceIsEdit ? 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <form 
-              id="experience"
-              onSubmit={handleSubmit}
-            >
-              <DatePicker name="dateStart" label="Начало периода" />
-              <DatePicker name="dateEnd" label="Конец периода" />
-              <TextField id="company" label="Компания" name="company" />
-              <Textarea name='achiev' minRows={2} placeholder='Достижения' />
-              <Textarea name='stack' minRows={2} placeholder='Cтэк'/>
-              <Button type='submit'>Добавить</Button>
-            </form>
-          </LocalizationProvider>
-         : <p>Опыт работы</p> 
-        }
-        { experienceIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('experience')}>Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li>
+    <div className={styles.block}>
+      { isLoading ? <p>isLoading ...</p> :
+        <>
+          <p>Вы авторизованы как {session?.user?.email}</p>
+          <p>Вернуться на <Link href='/'>Главную страницу</Link></p>
+          <h1>Личный кабинет</h1>
 
+          {
+            data && 
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              <li>
+                <UserNameOnProfile user={data.user[0]} handleSubmit={handleNameChangeSubmit}/> 
+              </li>
+              <li>
+                <UserExperienceOnProfile
+                  experience={data.experience}
+                  handleAddSubmit={handleAddExperience}
+                  handleDelete={handleDeleteExperience}
+                  handleEditExperience={handleEditExperience}
+                />
+              </li>
+              <li>
+                <SkillsOfUser 
+                  skills={data.skills}
+                  userSkills={data.userSkills}
+                  handleAddSkills={handleAddUserSkills}
+                  handleDelete={handleDeleteUserSkill}
+                />
+              </li>
+
+            </ul>
+          }
+
+    {/* <ol>
       <li>
         { skillsIsEdit ? 
           <form 
             id="skills"
-            onSubmit={handleSubmit}
+            // onSubmit={handleSubmit}
           >
-            <MultipleSelectionSkills optionSkills={skills} />
+            <MultipleSelectionSkills optionSkills={data?.skills} />
             <Button type='submit'>Добавить</Button>
           </form> : <p>Навыки</p> 
         }
-        { skillsIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('skills')}>Редактировать</Button> }
-        <Button>Очистить</Button>
+        { skillsIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={ () => handleClick('skills')} >Редактировать</Button> }
       </li>
-
-      <li>
-        { developIsEdit ? 
-          <form 
-            id="develop"
-            onSubmit={handleSubmit}
-          >
-            <MultipleSelectionSkills optionSkills={skills} />
-            <Button type='submit'>Добавить</Button>
-          </form> : <p>План развития</p>
-        }
-        { developIsEdit ? <Button disabled >Редактировать</Button> : <Button onClick={() => handleClick('develop')}>Редактировать</Button> }
-        <Button>Очистить</Button>
-      </li>
-    </ol>
-    </>
+    </ol> */}
+        </>
+      }
+   
+    </div>
   )
 }

@@ -30,3 +30,31 @@ export interface IVacancySkills {
   skill_id: number;
   skill_required_level: number;
 }
+
+export interface IUserSkill {
+  user_id: number;
+  skill_id: number;
+  skill_level: number;
+}
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  emailVerified: null;
+  image: string | null;
+}
+
+export interface IExperienceForm {
+  date_start: string;
+  date_end: string;
+  company: string;
+  achieve: string;
+  stack: string;
+}
+export interface IExperience extends IExperienceForm {
+  id: number;
+}
+export interface IExperienceFull extends IExperience{
+  user_id: number;
+}
