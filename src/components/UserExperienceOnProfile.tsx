@@ -61,7 +61,7 @@ export default function UserExperienceOnProfile({experience, handleAddSubmit, ha
   return (
     <>
     
-        <p>Опыт работы</p> 
+        <h3>Опыт работы</h3> 
 
       { !!experience.length && <Table aria-label="simple table">
         {/* sx={{ minWidth: 750 }} */}

@@ -72,7 +72,7 @@ export default function MultipleSelectionSkills({optionSkills}: IProps) {
 
 
   return (
-    <FormControl>
+    <FormControl style={{minWidth: 200}}>
       <InputLabel id="label">Навыки</InputLabel>
         <Select
           labelId="label"

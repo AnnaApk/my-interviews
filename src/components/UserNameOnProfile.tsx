@@ -35,7 +35,7 @@ export default function UserNameOnProfile({user, handleSubmit}:IProps) {
           <TextField id="name" label='ФИО' name="name" placeholder="" />
           <Button type="submit">Изменить</Button>
         </form> :
-        <p>{user.name}</p>
+        <h3>{user.name}</h3>
       }
       { !nameIsEdit && <Button onClick={handleClick} >Редактировать</Button> } 
     </>
