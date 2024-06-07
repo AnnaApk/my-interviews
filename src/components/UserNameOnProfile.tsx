@@ -32,7 +32,7 @@ export default function UserNameOnProfile({user, handleSubmit}:IProps) {
           // className={styles.block}
           id="name"
           onSubmit={onSubmit}>
-          <TextField id="name" label='ФИО' name="name" placeholder="" />
+          <TextField id="name" label='ФИО' name="name" placeholder="" defaultValue={user.name} />
           <Button type="submit">Изменить</Button>
         </form> :
         <h3>{user.name}</h3>

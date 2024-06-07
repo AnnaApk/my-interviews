@@ -60,7 +60,7 @@ export async function PATCH(request: Request) {
       SET Date_start = ${date_start},
           Date_end = ${date_end},
           Company = ${company},
-          Achiev = ${achieve},
+          Achieve = ${achieve},
           Stack = ${stack}
       WHERE id = ${id};`
     return NextResponse.json({}, { status: 200 });
